@@ -5,28 +5,27 @@ import { useEffect, useState } from "react";
 type ThemeMode = "dark" | "light";
 
 export function ThemeToggle() {
-  const [mode, setMode] = useState<ThemeMode>("dark");
+  const [mode, setMode] = useState<ThemeMode>(() => {
+    if (typeof window === "undefined") {
+      return "dark";
+    }
+    const stored = window.localStorage.getItem("theme");
+    return stored === "light" ? "light" : "dark";
+  });
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("theme");
-    if (stored === "light") {
+    if (mode === "dark") {
+      document.documentElement.classList.add("dark");
+      window.localStorage.setItem("theme", "dark");
+    } else {
       document.documentElement.classList.remove("dark");
-      setMode("light");
-      return;
+      window.localStorage.setItem("theme", "light");
     }
-    document.documentElement.classList.add("dark");
-    setMode("dark");
-  }, []);
+  }, [mode]);
 
   const toggle = () => {
     const next: ThemeMode = mode === "dark" ? "light" : "dark";
     setMode(next);
-    if (next === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    window.localStorage.setItem("theme", next);
   };
 
   return (
