@@ -4,7 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { headlineProofs, links, yearsOfExperience } from "@/lib/data";
 import { Prompt } from "@/components/primitives";
 import { BootLine, useBoot } from "@/components/BootSequence";
-import { HeroTopology } from "@/components/three/HeroTopology";
+import dynamic from "next/dynamic";
+
+// WebGL must not block first paint — the copy is the priority (§14)
+const HobbyStage = dynamic(
+  () => import("@/components/three/HobbyStage").then((m) => m.HobbyStage),
+  { ssr: false, loading: () => null }
+);
 
 /* three beats over the pinned scroll; each panel owns a slice of progress */
 const BEATS = [0, 0.42, 0.78];
@@ -50,15 +56,14 @@ export function Opening() {
   return (
     <section ref={sectionRef} id="about" className="relative h-[300vh]">
       <div className="sticky top-0 h-screen overflow-hidden">
-        {/* the system, not the desk: nodes wake, edges draw, a packet runs
-            the real read path (§5 item 16, §12) */}
-        {/* on phones the topology sits in the lower third, clear of the
-            headline; on wide screens it takes the right half */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-8 h-[38%] opacity-45 md:inset-y-0 md:left-auto md:right-0 md:h-auto md:w-[58%] md:opacity-100">
-          <HeroTopology stage={boot} />
+        {/* the life outside the terminal: gym, badminton, swimming, as a
+            still life that turns slowly. On phones it sits in the lower
+            third, clear of the headline; on wide screens, the right half. */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-8 h-[42%] opacity-70 md:inset-y-0 md:left-auto md:right-0 md:h-auto md:w-[58%] md:opacity-100">
+          <HobbyStage />
         </div>
 
-        {/* scrim keeps overlay text legible over the topology:
+        {/* scrim keeps overlay text legible over the scene:
             vertical on phones, horizontal on wide screens */}
         <div className="scrim-v pointer-events-none absolute inset-0 md:hidden" />
         <div className="scrim-h pointer-events-none absolute inset-0 hidden md:block" />
