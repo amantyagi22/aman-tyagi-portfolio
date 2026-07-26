@@ -488,8 +488,10 @@ function buildScene(scene: THREE.Scene): Rig {
   scene.add(pivot);
 
   // plinth: catches the shadows so the objects sit in space rather than float
+  // sized to the objects, not the panel — a wide empty rim reads as dead space
+  const R = 1.78;
   const plinth = new THREE.Mesh(
-    new THREE.CylinderGeometry(2.35, 2.35, 0.08, 64),
+    new THREE.CylinderGeometry(R, R, 0.08, 64),
     mat({ color: 0x202127, roughness: 0.85, metalness: 0.1 })
   );
   plinth.position.y = -0.92;
@@ -497,7 +499,7 @@ function buildScene(scene: THREE.Scene): Rig {
   pivot.add(plinth);
 
   const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(2.35, 0.008, 8, 96),
+    new THREE.TorusGeometry(R, 0.008, 8, 96),
     new THREE.MeshBasicMaterial({ color: EMBER, transparent: true, opacity: 0.4 })
   );
   ring.rotation.x = Math.PI / 2;
@@ -509,31 +511,32 @@ function buildScene(scene: THREE.Scene): Rig {
      Reads left to right as lift, play, swim, with code behind all of it. */
 
   const monitor = buildMonitor();
-  monitor.group.position.set(-0.06, -0.88, -1.34);
-  monitor.group.rotation.y = 0.12;
+  monitor.group.position.set(-0.24, -0.88, -0.96);
+  monitor.group.rotation.y = 0.16;
   pivot.add(monitor.group);
 
   const keyboard = buildKeyboard();
-  keyboard.position.set(0.02, -0.83, -0.42);
+  keyboard.position.set(-0.02, -0.83, -0.16);
   keyboard.rotation.set(0, 0.1, 0);
   pivot.add(keyboard);
 
+  // plate radius 0.44 × scale 0.5 = 0.22, so the axis clears the deck at -0.66
   const dumbbell = buildDumbbell();
   dumbbell.scale.setScalar(0.5);
-  dumbbell.position.set(-1.3, -0.72, 0.92);
+  dumbbell.position.set(-1.02, -0.66, 0.98);
   dumbbell.rotation.set(0, 0.42, 0.06);
   pivot.add(dumbbell);
 
   const racket = buildRacket();
   racket.scale.setScalar(0.7);
-  racket.position.set(1.3, -0.6, 0.34);
+  racket.position.set(1.02, -0.6, 0.16);
   racket.rotation.set(-0.16, -0.5, 0.16);
   pivot.add(racket);
 
   const goggles = buildGoggles();
   goggles.scale.setScalar(0.68);
-  goggles.position.set(0.2, -0.8, 1.16);
-  goggles.rotation.set(-0.95, 0.24, 0.1);
+  goggles.position.set(0.42, -0.82, 0.86);
+  goggles.rotation.set(-1.15, 0.3, 0.12);
   pivot.add(goggles);
 
   return { pivot, dumbbell, racket, goggles, keyboard, monitor };
@@ -568,10 +571,11 @@ export function HobbyStage() {
     key.shadow.mapSize.set(1024, 1024);
     key.shadow.camera.near = 1;
     key.shadow.camera.far = 18;
-    key.shadow.camera.left = -4;
-    key.shadow.camera.right = 4;
-    key.shadow.camera.top = 4;
-    key.shadow.camera.bottom = -4;
+    // tight to the plinth — a looser frustum just wastes shadow-map resolution
+    key.shadow.camera.left = -2.6;
+    key.shadow.camera.right = 2.6;
+    key.shadow.camera.top = 2.6;
+    key.shadow.camera.bottom = -2.6;
     key.shadow.bias = -0.0012;
     scene.add(key);
 
@@ -595,8 +599,8 @@ export function HobbyStage() {
       // pull back on narrow panels so nothing clips at the edges
       const aspect = el.clientWidth / el.clientHeight;
       const pull = aspect < 1.2 ? Math.min(1.2 / aspect, 2.2) : 1;
-      camera.position.set(0.5 * pull, 2.35 + (pull - 1) * 1.1, 7.1 * pull);
-      camera.lookAt(0, -0.1, -0.1);
+      camera.position.set(0.45 * pull, 2.0 + (pull - 1) * 1.1, 5.9 * pull);
+      camera.lookAt(0, -0.22, -0.05);
     };
     frame();
 
@@ -630,9 +634,9 @@ export function HobbyStage() {
       rig.pivot.rotation.x = curY * 0.5;
 
       // each object breathes on its own period so the rig never looks rigid
-      rig.dumbbell.position.y = -0.72 + Math.sin(t * 0.0009) * 0.025;
+      rig.dumbbell.position.y = -0.66 + Math.sin(t * 0.0009) * 0.022;
       rig.racket.rotation.z = 0.16 + Math.sin(t * 0.0007) * 0.045;
-      rig.goggles.position.y = -0.8 + Math.sin(t * 0.0011 + 1.7) * 0.028;
+      rig.goggles.position.y = -0.82 + Math.sin(t * 0.0011 + 1.7) * 0.022;
 
       drawTerminal(t);
 

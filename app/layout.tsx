@@ -44,7 +44,20 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${manrope.variable} ${geistMono.variable} h-full antialiased dark`}
+      // the inline script below rewrites this class before React hydrates,
+      // which is the intended behaviour, not a mismatch to warn about
+      suppressHydrationWarning
     >
+      <head>
+        {/* Runs before first paint: corrects the class on <html> so a
+            light-mode visitor never sees a flash of dark. Must be blocking
+            and inline — a deferred script paints too late. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem('theme')==='light')document.documentElement.classList.remove('dark')}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="min-h-full font-sans tracking-[-0.01em]">
         <div className="page-noise" aria-hidden="true" />
         {children}

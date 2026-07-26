@@ -85,12 +85,16 @@ export function Opening() {
                       "opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out)",
                   }}
                 >
-                  <p className="mt-5 text-[0.9375rem] tracking-[0.02em] text-[var(--text-secondary)]">
-                    Aman Tyagi
-                  </p>
-                  <h1 className="t-display mt-2 text-[var(--foreground)]">
-                    Backend Engineer.
+                  {/* name leads: it's the h1, so screen readers and search
+                      results open with who this is, not what they do */}
+                  <h1 className="t-display mt-5 text-[var(--foreground)]">
+                    Aman Tyagi.
                   </h1>
+                  {/* mono + tracking so the role reads as a label, not as
+                      another sentence competing with the tagline below */}
+                  <p className="mt-3 font-mono text-[0.9375rem] tracking-[0.06em] text-[var(--ember)]">
+                    Backend Engineer
+                  </p>
                 <p className="t-lead mt-5 max-w-[34ch] text-[var(--text-secondary)]">
                   I build the systems you never think about — until they stop
                   working.
