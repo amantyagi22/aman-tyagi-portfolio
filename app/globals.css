@@ -19,6 +19,7 @@
   --button-primary-bg: #0a0a0a;
   --button-primary-text: #f4f4f5;
   --button-secondary-text: #1a1a1a;
+  --ember: #c2410c;
 }
 
 .dark {
@@ -40,6 +41,7 @@
   --button-primary-bg: #ffffff;
   --button-primary-text: #0a0a0a;
   --button-secondary-text: #f4f4f5;
+  --ember: #e8590c;
 }
 
 @theme inline {
@@ -47,6 +49,26 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-manrope);
   --font-mono: var(--font-geist-mono);
+}
+
+:root {
+  --dur-instant: 120ms;
+  --dur-fast: 200ms;
+  --dur-base: 320ms;
+  --dur-slow: 600ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-snap: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  /* fast in, slower out: hover rules drop this to --dur-instant */
+  --default-transition-duration: calc(var(--dur-instant) * 1.5);
+}
+
+:is(a, button, summary):is(:hover, :focus-visible) {
+  transition-duration: var(--dur-instant);
+}
+
+:is(a, button):active {
+  transform: translateY(1px);
 }
 
 html {
@@ -62,6 +84,7 @@ body {
   background: rgba(255, 255, 255, 0.12);
 }
 
+/* static by design: no looping ambient animation */
 .page-noise {
   position: fixed;
   inset: 0;
@@ -72,32 +95,9 @@ body {
   background-size: 48px 48px, 48px 48px, 1200px 1200px;
   background-position: 0 0, 0 0, 40% 20%;
   opacity: 0.35;
-  animation: noiseShift 18s linear infinite;
   pointer-events: none;
   z-index: 0;
   mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.3));
-}
-
-@keyframes noiseShift {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(-2%, 1%, 0);
-  }
-  100% {
-    transform: translate3d(2%, -1%, 0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  .page-noise {
-    animation: none;
-  }
 }
 
 .glass-card {
@@ -125,17 +125,159 @@ body {
 .card {
   border: 1px solid var(--border);
   background: var(--panel-strong);
-  transition: border-color 200ms ease, transform 200ms ease, background 200ms ease;
+  transition:
+    border-color calc(var(--dur-instant) * 1.5) var(--ease-out),
+    background-color calc(var(--dur-instant) * 1.5) var(--ease-out),
+    transform calc(var(--dur-instant) * 1.5) var(--ease-out);
 }
 
 .card:hover {
   border-color: var(--border-strong);
   background: var(--panel);
   transform: translateY(-2px);
+  transition-duration: var(--dur-instant);
+}
+
+.card-locked:hover {
+  border-color: var(--border);
+  background: var(--panel-strong);
+  transform: none;
 }
 
 .pill {
   border: 1px solid var(--border);
   background: rgba(255, 255, 255, 0.03);
   color: var(--accent);
+}
+
+.scrim-h {
+  background: linear-gradient(
+    100deg,
+    var(--bg) 0%,
+    color-mix(in srgb, var(--bg) 78%, transparent) 28%,
+    transparent 62%
+  );
+}
+
+.scrim-v {
+  background: linear-gradient(
+    to bottom,
+    var(--bg) 0%,
+    color-mix(in srgb, var(--bg) 82%, transparent) 42%,
+    transparent 72%
+  );
+}
+
+/* --- motion primitives ------------------------------------------------- */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes console-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* page-load stagger; --d is set inline per element */
+.load-rise {
+  animation: rise-in var(--dur-fast) var(--ease-out) both;
+  animation-delay: var(--d, 0ms);
+}
+
+/* scroll reveal; --d = stagger delay, --o = settled opacity (locked cards) */
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--dur-fast) var(--ease-out) var(--d, 0ms),
+    transform var(--dur-fast) var(--ease-out) var(--d, 0ms);
+}
+
+.reveal-in {
+  opacity: var(--o, 1);
+  transform: none;
+}
+
+.console-backdrop {
+  animation: fade-in var(--dur-fast) var(--ease-out);
+  transition: opacity var(--dur-instant) linear;
+}
+
+.console-panel {
+  animation: console-in var(--dur-fast) var(--ease-snap);
+}
+
+.console-line {
+  animation: fade-in 30ms var(--ease-out) both;
+  animation-delay: var(--d, 0ms);
+}
+
+/* recruiter mode: a static document, no motion of any kind */
+.no-motion *,
+.no-motion *::before,
+.no-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .reveal,
+  .load-rise {
+    opacity: var(--o, 1) !important;
+    transform: none !important;
+  }
+}
+
+@media print {
+  .page-noise,
+  .no-print {
+    display: none !important;
+  }
+
+  /* force the light palette so dark mode prints legibly */
+  :root,
+  .dark {
+    --bg: #fff;
+    --bg-elev: #fff;
+    --panel: #fff;
+    --panel-strong: #fff;
+    --border: rgba(0, 0, 0, 0.15);
+    --border-strong: rgba(0, 0, 0, 0.3);
+    --muted: #444;
+    --muted-strong: #222;
+    --foreground: #000;
+    --ember: #c2410c;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
 }

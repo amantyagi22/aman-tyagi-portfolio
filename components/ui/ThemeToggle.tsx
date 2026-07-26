@@ -35,7 +35,7 @@ export function ThemeToggle() {
       className="flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--panel)] px-3 py-1 text-xs font-mono text-[var(--muted)] transition-colors hover:border-[var(--border-strong)]"
       aria-label={`Switch to ${mode === "dark" ? "light" : "dark"} mode`}
     >
-      {mode === "dark" ? "Dark" : "Light"}
+      {mode === "dark" ? "Light" : "Dark"}
       <span className="text-[var(--muted)]">Mode</span>
     </button>
   );
