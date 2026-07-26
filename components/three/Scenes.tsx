@@ -219,9 +219,10 @@ function buildHotpath(w: number, h: number): SceneSpec {
 /* --- chapter 03: a platform — layers, tenants isolated on top --------------- */
 
 function buildPlatform(w: number, h: number): SceneSpec {
-  const { scene, camera, rig, group } = baseScene(w, h, [0, 2.0, 5.2], [0, 0.5, 0]);
+  const { scene, camera, rig, group } = baseScene(w, h, [0, 1.9, 4.6], [0, 0.45, 0]);
 
-  const shades = [0x33333a, 0x44444c, 0x55555e];
+  // lifted from near-black so the slabs read against the dark canvas
+  const shades = [0x4a4a54, 0x5c5c66, 0x6e6e78];
   shades.forEach((shade, i) => {
     const slab = new THREE.Mesh(
       new THREE.BoxGeometry(2.5 - i * 0.25, 0.1, 1.6 - i * 0.18),

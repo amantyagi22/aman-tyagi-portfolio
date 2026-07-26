@@ -1,9 +1,11 @@
+"use client";
+
 import { Container } from "@/components/ui/Container";
 import { chapters, focusAreas, links, treeNodes, writing, yearsOfExperience } from "@/lib/data";
 
 const branches = [...new Set(treeNodes.map((n) => n.branch))];
 
-export function RecruiterResume() {
+export function RecruiterResume({ onExit }: { onExit?: () => void }) {
   return (
     <Container>
       <div className="mx-auto max-w-3xl py-12 text-sm leading-relaxed">
@@ -14,13 +16,24 @@ export function RecruiterResume() {
             </h1>
             <p className="text-[var(--muted)]">Backend Engineer · India</p>
           </div>
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="no-print rounded-full border border-[var(--border)] px-4 py-1.5 text-xs font-mono text-[var(--muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
-          >
-            Print / Save PDF
-          </button>
+          <div className="no-print flex items-center gap-2">
+            {onExit ? (
+              <button
+                type="button"
+                onClick={onExit}
+                className="rounded-full border border-[var(--border)] px-4 py-1.5 text-xs font-mono text-[var(--muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
+              >
+                ← Back to site
+              </button>
+            ) : null}
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="rounded-full border border-[var(--border)] px-4 py-1.5 text-xs font-mono text-[var(--muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
+            >
+              Print / Save PDF
+            </button>
+          </div>
         </div>
 
         <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--muted)]">

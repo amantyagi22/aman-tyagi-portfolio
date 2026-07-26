@@ -9,7 +9,7 @@ export function PrimaryButton({ href, children }: ButtonProps) {
   return (
     <Link
       href={href}
-      className="inline-flex items-center justify-center rounded-full bg-[var(--button-primary-bg)] px-5 py-2 text-sm font-medium text-[var(--button-primary-text)] transition-colors hover:opacity-90"
+      className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--button-primary-bg)] px-5 py-2 text-sm font-medium text-[var(--button-primary-text)] transition-colors hover:opacity-90"
     >
       {children}
     </Link>

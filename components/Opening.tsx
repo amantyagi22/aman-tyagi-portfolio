@@ -1,21 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
-import { links, yearsOfExperience } from "@/lib/data";
-
-const DeskStage = dynamic(
-  () => import("@/components/three/DeskStage").then((m) => m.DeskStage),
-  { ssr: false }
-);
+import { headlineProofs, links, yearsOfExperience } from "@/lib/data";
+import { Prompt } from "@/components/primitives";
+import { BootLine, useBoot } from "@/components/BootSequence";
+import { HeroTopology } from "@/components/three/HeroTopology";
 
 /* three beats over the pinned scroll; each panel owns a slice of progress */
 const BEATS = [0, 0.42, 0.78];
 
 export function Opening() {
   const sectionRef = useRef<HTMLElement>(null);
-  const progress = useRef(0);
   const [beat, setBeat] = useState(0);
+  const boot = useBoot();
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -27,7 +24,6 @@ export function Opening() {
       const rect = el.getBoundingClientRect();
       const scrollable = el.offsetHeight - window.innerHeight;
       const p = scrollable > 0 ? Math.min(Math.max(-rect.top / scrollable, 0), 1) : 0;
-      progress.current = p;
       let next = 0;
       for (let i = BEATS.length - 1; i >= 0; i--) {
         if (p >= BEATS[i]) {
@@ -54,51 +50,81 @@ export function Opening() {
   return (
     <section ref={sectionRef} id="about" className="relative h-[300vh]">
       <div className="sticky top-0 h-screen overflow-hidden">
-        <div className="absolute inset-0">
-          <DeskStage progressRef={progress} />
+        {/* the system, not the desk: nodes wake, edges draw, a packet runs
+            the real read path (§5 item 16, §12) */}
+        {/* on phones the topology sits in the lower third, clear of the
+            headline; on wide screens it takes the right half */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-8 h-[38%] opacity-45 md:inset-y-0 md:left-auto md:right-0 md:h-auto md:w-[58%] md:opacity-100">
+          <HeroTopology stage={boot} />
         </div>
 
-        {/* scrim keeps overlay text legible wherever the desk sits behind it:
-            vertical on phones (text above desk), horizontal on wide screens */}
+        {/* scrim keeps overlay text legible over the topology:
+            vertical on phones, horizontal on wide screens */}
         <div className="scrim-v pointer-events-none absolute inset-0 md:hidden" />
         <div className="scrim-h pointer-events-none absolute inset-0 hidden md:block" />
 
         <div className="pointer-events-none absolute inset-0">
           <div className="mx-auto flex h-full w-full max-w-6xl items-center px-6">
             <div className="relative w-full max-w-md">
+              {/* Beat 0 carries the whole 30-second answer: role, seniority,
+                  two hard numbers. Nothing important waits for a scroll. */}
               <Panel active={beat === 0}>
-                <p className="font-mono text-xs text-[var(--ember)]">
-                  ~$ whoami
+                {boot === 2 ? <Prompt>whoami</Prompt> : <BootLine stage={boot} />}
+                {/* resolves with the boot; text is present at frame one so
+                    reading is never delayed (§13 rule 3) */}
+                <div
+                  style={{
+                    opacity: boot === 2 ? 1 : 0,
+                    transform: boot === 2 ? "none" : "translateY(6px)",
+                    transition:
+                      "opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out)",
+                  }}
+                >
+                  <p className="mt-5 text-[0.9375rem] tracking-[0.02em] text-[var(--text-secondary)]">
+                    Aman Tyagi
+                  </p>
+                  <h1 className="t-display mt-2 text-[var(--foreground)]">
+                    Backend Engineer.
+                  </h1>
+                <p className="t-lead mt-5 max-w-[34ch] text-[var(--text-secondary)]">
+                  I build the systems you never think about — until they stop
+                  working.
                 </p>
-                <h1 className="mt-4 text-5xl font-semibold leading-[1.05] tracking-tight text-[var(--foreground)] md:text-7xl">
-                  Aman Tyagi
-                </h1>
-                <p className="mt-4 text-lg text-[var(--muted)] md:text-xl">
-                  Backend Engineer · {yearsOfExperience()} yrs · India
-                </p>
+                <dl className="mt-8 flex flex-wrap gap-x-10 gap-y-5">
+                  {headlineProofs.map((proof) => (
+                    <div key={proof.label}>
+                      <dt className="t-metric text-[var(--foreground)]">
+                        {proof.value}
+                      </dt>
+                      <dd className="mt-1.5 max-w-[20ch] text-[0.8125rem] leading-snug text-[var(--text-secondary)]">
+                        {proof.label}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+                  <p className="t-label mt-8">
+                    {yearsOfExperience()} years · India · open to offers
+                  </p>
+                </div>
               </Panel>
 
               <Panel active={beat === 1}>
-                <p className="font-mono text-xs text-[var(--ember)]">
-                  ~$ cat about.txt
-                </p>
-                <p className="mt-4 text-2xl font-semibold leading-snug tracking-tight text-[var(--foreground)] md:text-4xl">
+                <Prompt>cat about.txt</Prompt>
+                <p className="t-h1 mt-5 max-w-[18ch] text-[var(--foreground)]">
                   The best backend work is invisible.
                 </p>
-                <p className="mt-3 text-lg text-[var(--muted)]">
-                  This is the visible version.
+                <p className="t-lead mt-4 text-[var(--text-secondary)]">
+                  Distributed systems, performance work, and the platforms other
+                  teams build on. This is the visible version.
                 </p>
               </Panel>
 
               <Panel active={beat === 2}>
-                <p className="font-mono text-xs text-[var(--ember)]">
-                  ~$ ls ~/desk
+                <Prompt>ls ~/contact</Prompt>
+                <p className="t-lead mt-5 max-w-[30ch] text-[var(--text-secondary)]">
+                  Open to backend and platform roles.
                 </p>
-                <p className="mt-4 max-w-md text-base leading-relaxed text-[var(--muted)] md:text-lg">
-                  Distributed systems, performance work, and the platforms other
-                  teams build on — all of it shipped from here.
-                </p>
-                <div className="pointer-events-auto mt-6 flex flex-wrap gap-3 text-sm text-[var(--muted)]">
+                <div className="pointer-events-auto mt-6 flex flex-wrap gap-3 text-sm text-[var(--text-secondary)]">
                   {[
                     ["GitHub", links.github],
                     ["LinkedIn", links.linkedin],
@@ -107,7 +133,7 @@ export function Opening() {
                     <a
                       key={label}
                       href={href}
-                      className="rounded-full border border-[var(--border)] bg-[var(--bg)]/60 px-3 py-1 backdrop-blur transition-colors hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
+                      className="rounded-full border border-[var(--border)] bg-[var(--bg)]/60 px-3.5 py-1.5 backdrop-blur transition-colors hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
                     >
                       {label}
                     </a>
@@ -129,11 +155,14 @@ export function Opening() {
   );
 }
 
-/* panels share one grid cell so they cross-fade in place, no layout shift */
+/* panels share one grid cell so they cross-fade in place, no layout shift.
+   `inert` keeps hidden panels out of the tab order — aria-hidden alone
+   would still let keyboard users land on invisible links. */
 function Panel({ active, children }: { active: boolean; children: React.ReactNode }) {
   return (
     <div
       aria-hidden={!active}
+      inert={!active}
       className="transition-all duration-300 ease-out"
       style={{
         position: active ? "relative" : "absolute",

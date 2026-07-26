@@ -1,68 +1,93 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { buildCommands, complete, execute, type Effect } from "@/lib/console";
 
-interface Command {
-  name: string;
-  description: string;
-  hidden?: boolean;
+/* A working shell (redesign.md §7): real history, tab completion, and
+   commands that execute. The command layer lives in lib/console.ts — this
+   component only renders it and applies effects. */
+
+interface Entry {
+  input: string;
+  lines: string[];
 }
 
-const COMMANDS: Command[] = [
-  { name: "about", description: "who is this" },
-  { name: "story", description: "told forward" },
-  { name: "stack", description: "the dependency graph" },
-  { name: "contact", description: "send a message" },
-  { name: "resume", description: "recruiter mode, printable" },
-  { name: "help", description: "list commands" },
+const BANNER = [
+  "aman.systems — type `help` for commands",
 ];
-
-/* line-by-line delays at 30ms per line, capped at 200ms total */
-function lineDelay(i: number, count: number): number {
-  if (count <= 1) return 0;
-  return Math.round(Math.min(i * 30, (170 * i) / (count - 1)));
-}
 
 export function CommandMenu({ onResume }: { onResume: () => void }) {
   const [open, setOpen] = useState(false);
-  const [closing, setClosing] = useState(false);
+  const [entries, setEntries] = useState<Entry[]>([]);
   const [input, setInput] = useState("");
-  const [selected, setSelected] = useState(0);
-  const [output, setOutput] = useState<string | null>(null);
+  const [history, setHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const logRef = useRef<HTMLDivElement>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
-  const openConsole = useCallback(() => {
-    setInput("");
-    setOutput(null);
-    setSelected(0);
-    setClosing(false);
-    setOpen(true);
-  }, []);
+  const commands = useMemo(() => buildCommands(), []);
 
   const close = useCallback(() => {
-    setClosing(true);
-    window.setTimeout(() => {
-      setOpen(false);
-      setClosing(false);
-    }, 120);
+    setOpen(false);
+    returnFocusRef.current?.focus();
   }, []);
 
+  const applyEffect = useCallback(
+    (effect: Effect) => {
+      switch (effect.type) {
+        case "navigate":
+          close();
+          document.getElementById(effect.target)?.scrollIntoView();
+          break;
+        case "resume":
+          close();
+          onResume();
+          break;
+        case "theme":
+          document.documentElement.classList.toggle("dark");
+          window.localStorage.setItem(
+            "theme",
+            document.documentElement.classList.contains("dark") ? "dark" : "light"
+          );
+          break;
+        case "clear":
+          setEntries([]);
+          break;
+        case "close":
+          close();
+          break;
+      }
+    },
+    [close, onResume]
+  );
+
+  const submit = useCallback(() => {
+    const value = input;
+    setInput("");
+    setHistoryIndex(null);
+    if (value.trim()) setHistory((h) => [...h, value.trim()]);
+    const result = execute(value, commands);
+    if (result.lines.length || !result.effect) {
+      setEntries((e) => [...e, { input: value, lines: result.lines }]);
+    }
+    if (result.effect) applyEffect(result.effect);
+  }, [input, commands, applyEffect]);
+
+  // global ⌘K / Ctrl+K
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
-        if (open) {
-          close();
-        } else {
-          openConsole();
-        }
-      }
-      if (event.key === "Escape" && open) {
-        close();
+        setOpen((prev) => {
+          if (!prev) returnFocusRef.current = document.activeElement as HTMLElement;
+          return !prev;
+        });
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, close, openConsole]);
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -71,159 +96,147 @@ export function CommandMenu({ onResume }: { onResume: () => void }) {
     };
   }, [open]);
 
-  const query = input.trim().toLowerCase();
-  const matches = COMMANDS.filter(
-    (c) => !c.hidden && c.name.startsWith(query)
-  );
+  useEffect(() => {
+    if (open) inputRef.current?.focus();
+  }, [open, entries.length]);
 
-  const run = (name: string) => {
-    setOutput(null);
-    switch (name) {
-      case "resume":
-        onResume();
-        close();
-        break;
-      case "help":
-        setOutput(
-          COMMANDS.filter((c) => !c.hidden)
-            .map((c) => `${c.name.padEnd(14)}${c.description}`)
-            .join("\n")
-        );
-        setInput("");
-        break;
-      default: {
-        document.getElementById(name)?.scrollIntoView();
-        close();
-      }
-    }
-  };
+  useEffect(() => {
+    logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
+  }, [entries]);
 
-  const onSubmit = () => {
-    const exact = COMMANDS.find((c) => c.name === query);
-    if (exact) {
-      run(exact.name);
-    } else if (matches.length > 0) {
-      run(matches[Math.min(selected, matches.length - 1)].name);
-    } else if (query) {
-      setOutput(`command not found: ${query}`);
-      setInput("");
-    }
+  const openConsole = () => {
+    returnFocusRef.current = document.activeElement as HTMLElement;
+    setOpen(true);
   };
 
   return (
-    <div className="relative">
+    <>
       <button
         type="button"
         onClick={openConsole}
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label="Open console"
-        className="flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--panel)] px-3 py-1 text-xs font-mono text-[var(--muted)] transition-colors hover:border-[var(--border-strong)]"
+        className="flex items-center gap-2 rounded-full border border-[var(--border)] px-3 py-1 font-mono text-[11px] text-[var(--text-secondary)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
       >
-        Cmd+K
-        <span className="text-[var(--muted)]">Console</span>
+        <span aria-hidden="true">⌘K</span>
+        <span className="sr-only">Open console</span>
+        <span aria-hidden="true">console</span>
       </button>
+
       {open ? (
         <div
-          className={`console-backdrop fixed inset-0 z-50 flex items-start justify-center bg-[var(--overlay)] px-4 pt-24 ${
-            closing ? "opacity-0" : ""
-          }`}
+          className="console-backdrop fixed inset-0 z-50 flex items-start justify-center bg-[var(--overlay)] px-4 pt-[12vh]"
           onClick={close}
         >
           <div
             role="dialog"
             aria-modal="true"
             aria-label="Console"
-            className={`console-panel w-full max-w-lg rounded-2xl border border-[var(--border-strong)] bg-[var(--panel-strong)] p-4 font-mono shadow-[0_20px_60px_rgba(0,0,0,0.35)] backdrop-blur-sm ${
-              closing ? "invisible" : ""
-            }`}
+            className="console-panel flex max-h-[70vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--bg-elev)] shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
             onClick={(event) => event.stopPropagation()}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                event.stopPropagation();
+                close();
+              }
+            }}
           >
-            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
-              <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">
-                Console
+            <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-2.5">
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--text-tertiary)]">
+                console
               </p>
               <button
                 type="button"
                 onClick={close}
-                className="rounded-full border border-[var(--border)] px-2 py-1 text-xs text-[var(--muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
+                className="font-mono text-[11px] text-[var(--text-tertiary)] transition-colors hover:text-[var(--foreground)]"
               >
-                Esc
+                esc
               </button>
             </div>
 
-            <div className="mt-3 flex items-center gap-2 text-sm">
-              <span className="text-[var(--ember)]">❯</span>
-              <input
-                value={input}
-                onChange={(e) => {
-                  setInput(e.target.value);
-                  setSelected(0);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    onSubmit();
-                  } else if (e.key === "ArrowDown") {
-                    e.preventDefault();
-                    setSelected((s) => Math.min(s + 1, matches.length - 1));
-                  } else if (e.key === "ArrowUp") {
-                    e.preventDefault();
-                    setSelected((s) => Math.max(s - 1, 0));
-                  }
-                }}
-                placeholder="type a command"
-                aria-label="Command input"
-                className="w-full bg-transparent text-[var(--foreground)] caret-[var(--ember)] placeholder-[var(--muted)] outline-none"
-                autoComplete="off"
-                spellCheck={false}
-                autoFocus
-              />
+            <div
+              ref={logRef}
+              className="flex-1 overflow-y-auto px-4 py-3 font-mono text-[0.8125rem] leading-relaxed"
+            >
+              {BANNER.map((line) => (
+                <p key={line} className="text-[var(--text-tertiary)]">
+                  {line}
+                </p>
+              ))}
+
+              {entries.map((entry, i) => (
+                <div key={`${entry.input}-${i}`} className="mt-3">
+                  <p className="text-[var(--text-secondary)]">
+                    <span className="text-[var(--ember)]">~$</span> {entry.input}
+                  </p>
+                  {entry.lines.map((line, j) => (
+                    <p
+                      key={j}
+                      className="whitespace-pre-wrap text-[var(--text-secondary)]"
+                    >
+                      {line || " "}
+                    </p>
+                  ))}
+                </div>
+              ))}
+
+              <div aria-live="polite" className="sr-only">
+                {entries.at(-1)?.lines.join(". ")}
+              </div>
             </div>
 
-            {output ? (
-              <div className="mt-3 overflow-x-auto whitespace-pre border-t border-[var(--border)] pt-3 text-xs leading-relaxed text-[var(--muted-strong)]">
-                {output.split("\n").map((line, i, lines) => (
-                  <div
-                    key={`${i}-${line}`}
-                    className="console-line"
-                    style={{ "--d": `${lineDelay(i, lines.length)}ms` } as React.CSSProperties}
-                  >
-                    {line}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <ul className="mt-3 space-y-1 border-t border-[var(--border)] pt-3">
-                {matches.map((c, i) => (
-                  <li key={c.name}>
-                    <button
-                      type="button"
-                      onClick={() => run(c.name)}
-                      onMouseEnter={() => setSelected(i)}
-                      className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                        i === selected
-                          ? "bg-[var(--panel)] text-[var(--foreground)]"
-                          : "text-[var(--muted)]"
-                      }`}
-                    >
-                      <span>{c.name}</span>
-                      <span className="text-xs text-[var(--muted)]">
-                        {c.description}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-                {matches.length === 0 ? (
-                  <li className="px-3 py-2 text-xs text-[var(--muted)]">
-                    no matching command — enter to try anyway
-                  </li>
-                ) : null}
-              </ul>
-            )}
+            <form
+              className="flex items-center gap-2 border-t border-[var(--border)] px-4 py-3"
+              onSubmit={(event) => {
+                event.preventDefault();
+                submit();
+              }}
+            >
+              <span aria-hidden="true" className="font-mono text-[var(--ember)]">
+                ~$
+              </span>
+              <input
+                ref={inputRef}
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Tab") {
+                    event.preventDefault();
+                    const completed = complete(input, commands);
+                    if (completed) setInput(completed);
+                  } else if (event.key === "ArrowUp") {
+                    event.preventDefault();
+                    if (!history.length) return;
+                    const next =
+                      historyIndex === null
+                        ? history.length - 1
+                        : Math.max(0, historyIndex - 1);
+                    setHistoryIndex(next);
+                    setInput(history[next]);
+                  } else if (event.key === "ArrowDown") {
+                    event.preventDefault();
+                    if (historyIndex === null) return;
+                    const next = historyIndex + 1;
+                    if (next >= history.length) {
+                      setHistoryIndex(null);
+                      setInput("");
+                    } else {
+                      setHistoryIndex(next);
+                      setInput(history[next]);
+                    }
+                  }
+                }}
+                aria-label="Command input"
+                placeholder="help"
+                autoComplete="off"
+                autoCorrect="off"
+                spellCheck={false}
+                className="w-full bg-transparent font-mono text-[0.8125rem] text-[var(--foreground)] caret-[var(--ember)] placeholder-[var(--text-tertiary)] focus:outline-none"
+              />
+            </form>
           </div>
         </div>
       ) : null}
-    </div>
+    </>
   );
 }
