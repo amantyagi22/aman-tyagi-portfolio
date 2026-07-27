@@ -89,7 +89,7 @@ export function Incidents() {
       <div className="mx-auto w-full max-w-4xl px-6">
         <Reveal>
           <SectionOpener
-            label="04 · Incidents"
+            label="03 · Incidents"
             title="Three problems, written up honestly"
             lead="The work that mattered, in the format engineers actually use to reason about failure."
           />

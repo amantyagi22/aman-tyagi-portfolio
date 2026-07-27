@@ -36,7 +36,6 @@ export interface CommandSpec {
 
 const SECTIONS = [
   "overview",
-  "journey",
   "services",
   "incidents",
   "stack",

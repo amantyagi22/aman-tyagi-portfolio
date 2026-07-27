@@ -555,7 +555,10 @@ export function HobbyStage() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(el.clientWidth, el.clientHeight);
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    // PCFSoftShadowMap is deprecated as of three r185 — the renderer silently
+    // swaps it for PCFShadowMap on the first shadow render anyway, so setting it
+    // directly is the same output without the console warning every load.
+    renderer.shadowMap.type = THREE.PCFShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
     el.appendChild(renderer.domElement);

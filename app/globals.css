@@ -191,9 +191,9 @@
   transform: translateY(1px);
 }
 
-html {
-  scroll-behavior: smooth;
-}
+/* ponytail: no `scroll-behavior: smooth` here — on `html` it animates wheel and
+   trackpad scrolling too, which stutters against the rAF-driven pinned sections
+   (Opening, RequestJourney). Anchor jumps opt in per call via scrollIntoView. */
 
 body {
   background: var(--bg);
@@ -459,10 +459,6 @@ article[id] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   *,
   *::before,
   *::after {

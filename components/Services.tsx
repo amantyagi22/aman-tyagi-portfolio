@@ -149,7 +149,7 @@ export function Services() {
       <div className="mx-auto w-full max-w-[1280px] px-6">
         <Reveal>
           <SectionOpener
-            label="03 · Services"
+            label="02 · Services"
             title="What I've shipped, most recent first"
           />
         </Reveal>

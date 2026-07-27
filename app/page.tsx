@@ -7,7 +7,6 @@ import { StatusBar } from "@/components/StatusBar";
 import { ShortcutOverlay } from "@/components/ShortcutOverlay";
 import { Opening } from "@/components/Opening";
 import { SystemOverview } from "@/components/SystemOverview";
-import { RequestJourney } from "@/components/RequestJourney";
 import { Services } from "@/components/Services";
 import { Incidents } from "@/components/Incidents";
 import { Changelog } from "@/components/Changelog";
@@ -35,7 +34,6 @@ export default function Home() {
       <main id="content" className="relative z-10">
         <Opening />
         <SystemOverview />
-        <RequestJourney />
         <Services />
         <Incidents />
 
@@ -46,7 +44,7 @@ export default function Home() {
           <div className="mx-auto w-full max-w-[1280px] px-6">
             <Reveal>
               <SectionOpener
-                label="05 · Stack"
+                label="04 · Stack"
                 title="How the pieces depend on each other"
                 lead="Select a node to focus it. Select a second to trace the path between them."
               />
@@ -65,7 +63,7 @@ export default function Home() {
             <div className="grid items-center gap-12 md:grid-cols-[1fr_1.1fr]">
               <Reveal>
                 <SectionOpener
-                  label="07 · Connect"
+                  label="06 · Connect"
                   title="Let's build something scalable."
                   lead="Open to backend and platform engagements. Based in India, working across timezones."
                 />

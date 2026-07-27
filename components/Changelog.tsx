@@ -21,7 +21,7 @@ export function Changelog() {
     >
       <div className="mx-auto w-full max-w-[1280px] px-6">
         <Reveal>
-          <SectionOpener label="06 · Changelog" title="Shipped, by release" />
+          <SectionOpener label="05 · Changelog" title="Shipped, by release" />
         </Reveal>
 
         <div className="mt-14 max-w-4xl">

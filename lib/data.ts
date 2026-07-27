@@ -292,10 +292,15 @@ export const chapters: Chapter[] = [...timeline].reverse();
 export const prologue =
   "2022 · Where it started: backend lead intern at Duckcart, DevOps intern at Recruit CRM.";
 
-/* --- request journey (§5.02) --------------------------------------------
+/* --- read path -----------------------------------------------------------
    Latencies are the real shape of the RAG read path: cache-first, with the
-   database and queue only on a miss. `hitStop` marks where a cache hit
-   short-circuits back to the client. */
+   database and queue only on a miss. `cacheSkips` lists the hops a cache hit
+   short-circuits past.
+
+   Console-only now (`trace`). This used to drive a pinned scroll section that
+   made visitors scroll 320vh to learn that a cache hit is fast — the impact
+   claims in `chapters` already cover that, so the section went and the data
+   stayed for anyone who opens the console and actually wants the hop costs. */
 
 export interface Hop {
   id: string;

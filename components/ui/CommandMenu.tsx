@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { buildCommands, complete, execute, type Effect } from "@/lib/console";
+import { prefersReducedMotion } from "@/components/motion/Reveal";
 
 /* A working shell (redesign.md §7): real history, tab completion, and
    commands that execute. The command layer lives in lib/console.ts — this
@@ -38,7 +39,9 @@ export function CommandMenu({ onResume }: { onResume: () => void }) {
       switch (effect.type) {
         case "navigate":
           close();
-          document.getElementById(effect.target)?.scrollIntoView();
+          document.getElementById(effect.target)?.scrollIntoView({
+            behavior: prefersReducedMotion() ? "auto" : "smooth",
+          });
           break;
         case "resume":
           close();
