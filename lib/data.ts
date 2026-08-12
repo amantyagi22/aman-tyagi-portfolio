@@ -14,33 +14,35 @@ export interface FocusArea {
 export const focusAreas: FocusArea[] = [
   {
     label: "Distributed Systems",
-    proof: "cron-driven Bull fan-out, 7+ metric domains into BigQuery",
+    proof: "queues and workers that keep the slow work off the request path",
   },
   {
     label: "Performance Engineering",
-    proof: "4.5s → 50ms leaderboard reads on the hot path",
+    proof: "took the busiest screen from 4.5 seconds to 50 milliseconds",
   },
   {
     label: "Data Modeling",
-    proof: "nested docs → flat collections; 2 queries → one $lookup",
+    proof: "reshaped the data so reads cost half as much",
   },
   {
     label: "AI & RAG",
-    proof: "multi-tenant retrieval over franchise SOPs, Weaviate + Bedrock",
+    proof: "search that answers questions from a company's own documents",
   },
   {
     label: "API Design",
-    proof: "17 GraphQL APIs in one domain; partner API with hosted OpenAPI docs",
+    proof: "APIs other teams and outside partners build on",
   },
 ];
 
-/** The 30-second answer, per redesign.md §5.01 — three parallel columns. */
+/* The 30-second answer. Four, not five: "0 downtime incidents" was dropped —
+   an absence is unfalsifiable and read as filler beside the hard numbers, and
+   the fifth item orphaned itself on its own grid row. The zero-downtime claim
+   still earns its place in INCIDENT-001, where the method backs it up. */
 export const scaleFacts: { value: string; label: string }[] = [
   { value: "600k+", label: "records migrated" },
   { value: "90×", label: "latency reduction" },
   { value: "350+", label: "daily automated runs" },
   { value: "17", label: "APIs, one domain" },
-  { value: "0", label: "downtime incidents" },
 ];
 
 export const stackList = [
@@ -147,140 +149,134 @@ export interface WorkItem {
   impact: string;
 }
 
-export interface ChapterStat {
-  value: string;
-  label: string;
-}
-
-export type ChapterScene = "realtime" | "hotpath" | "platform";
-
 export interface Chapter {
-  arc: string;
-  /** service identifier — work reframed as a deployed system (§5.03) */
-  service: string;
-  version: string;
   company: string;
+  /** where the role sat, and whether it was remote */
+  location: string;
   role: string;
-  period: string;
-  narrative: string;
-  stats: ChapterStat[];
-  scene: ChapterScene;
+  /** Full-time / Part-time / Internship */
+  type: string;
+  /** compact range, e.g. "06.2025 — present" */
+  dates: string;
+  /** elapsed time, e.g. "1y 2m" */
+  duration: string;
+  /** the tools actually used, rendered as tags */
+  tech: string[];
   items: WorkItem[];
 }
 
 /* chronological source of truth; the site renders it reversed (latest first) */
 const timeline: Chapter[] = [
   {
-    arc: "Foundations",
-    service: "teal-analytics",
-    version: "v1.0",
     company: "Teal India",
+    location: "India (On-site)",
     role: "Software Engineer",
-    period: "Feb 2023 – Aug 2024",
-    narrative:
-      "The first production systems: live dashboards over Socket.io with sticky sessions across distributed servers, and a legal document framework that shipped reports every day, unattended.",
-    stats: [{ value: "350+", label: "reports a day" }],
-    scene: "realtime",
+    type: "Full-time",
+    dates: "02.2023 — 08.2024",
+    duration: "1y 7m",
+    tech: ["Node.js", "Socket.io", "MongoDB", "Express", "Docker"],
     items: [
       {
         title: "Real-time analytics",
         description:
-          "Socket.io with sticky sessions across distributed servers.",
-        impact: "real-time at multi-server scale",
+          "Live dashboards that kept updating correctly even as we added more servers.",
+        impact: "dashboards stayed live as servers scaled out",
       },
       {
         title: "Legal document-extraction framework",
-        description: "Automated extraction and report generation.",
-        impact: "350+ reports daily",
+        description:
+          "Software that reads legal documents and writes the reports itself.",
+        impact: "350+ reports a day, no one touching them",
       },
     ],
   },
   {
-    arc: "Speed",
-    service: "playo-core",
-    version: "v2.0",
     company: "Playo",
+    location: "Bengaluru, India (On-site)",
     role: "Software Engineer",
-    period: "Sep 2024 – Jun 2025",
-    narrative:
-      "The hot path. A leaderboard that took 4.5 seconds learned to answer in 50 milliseconds. Search dropped under a second. And 600,000 people changed chat providers without noticing.",
-    stats: [
-      { value: "90×", label: "leaderboard reads" },
-      { value: "<1s", label: "geo search, from 4s" },
-      { value: "600k+", label: "records, zero downtime" },
-    ],
-    scene: "hotpath",
+    type: "Full-time",
+    dates: "09.2024 — 06.2025",
+    duration: "10m",
+    tech: ["Node.js", "Redis", "MongoDB Atlas", "TypeScript", "AWS"],
     items: [
       {
         title: "Dense-ranking leaderboard",
-        description: "Tiered Redis caching over dense ranks.",
-        impact: "4.5s → 50ms (90×)",
+        description:
+          "Precomputed the rankings and kept them in fast memory, instead of rebuilding them every visit.",
+        impact: "the slowest screen became the fastest",
       },
       {
         title: "Geospatial search",
-        description: "MongoDB Atlas Search with geospatial querying.",
-        impact: "4s → under 1s",
+        description: "Made 'find places near me' actually fast.",
+        impact: "search stopped feeling broken",
       },
       {
         title: "Chat migration",
         description:
-          "600,000+ user records, CometChat → SendBird, zero downtime.",
-        impact: "under 50 minutes · 100% integrity",
+          "Moved every user's chat history to a new provider without taking the app down.",
+        impact: "600k users moved, nobody noticed",
       },
     ],
   },
   {
-    arc: "Platforms",
-    service: "delightree-platform",
-    version: "v3.0",
     company: "Delightree",
+    location: "Remote",
     role: "Senior Software Engineer",
-    period: "Jun 2025 – Present",
-    narrative:
-      "Platform work — the plumbing other teams build on. A multi-tenant RAG engine over franchise SOPs, an integration platform where a new provider costs four files, and a support domain built from a blank page.",
-    stats: [
-      { value: "17", label: "GraphQL APIs" },
-      { value: "4", label: "files per integration" },
-      { value: "0", label: "secrets in logs" },
+    type: "Full-time",
+    dates: "06.2025 — present",
+    duration: "1y 2m",
+    tech: [
+      "TypeScript",
+      "GraphQL",
+      "Weaviate",
+      "AWS Bedrock",
+      "BullMQ",
+      "BigQuery",
+      "MongoDB",
+      "Zod",
     ],
-    scene: "platform",
     items: [
       {
         title: "Multi-tenant RAG engine",
         description:
-          "Answers over franchise SOPs: Weaviate hybrid search + AWS Bedrock, session memory.",
-        impact: "2-layer per-tenant permission isolation",
+          "Ask a question in plain English, get an answer pulled from the company's own manuals.",
+        impact: "no franchise can ever see another's documents",
       },
       {
         title: "Integration platform",
         description:
-          "Standardized 5 production integrations on Paragon: HubSpot, QuickBooks, Zapier, Zenoti, Read AI.",
-        impact: "new integration = 4 files",
+          "One shared way to connect outside tools — HubSpot, QuickBooks, Zapier and two more.",
+        impact: "adding a sixth provider takes an afternoon",
       },
       {
         title: "Async analytics pipeline",
-        description: "Cron-driven Bull queue fan-out into BigQuery.",
-        impact: "7+ metric domains",
+        description:
+          "Moved the heavy number-crunching to the background, on a schedule.",
+        impact: "reports never slow down the app",
       },
       {
         title: "Support ticketing domain",
-        description: "Built from scratch — collections, APIs, notifications.",
-        impact: "17 GraphQL APIs · 6 collections · 9-event notifications",
+        description:
+          "Designed and built the whole support-ticket system, start to finish.",
+        impact: "a whole support product, built from nothing",
       },
       {
         title: "Data-model migration",
-        description: "Nested documents flattened into their own collection.",
-        impact: "2 queries → single $lookup",
+        description:
+          "Restructured how the data was stored so the app could find it faster.",
+        impact: "halved the database work per read",
       },
       {
         title: "Partner ingestion API",
-        description: "Scoped API-key auth, Zod validation, hosted OpenAPI docs.",
-        impact: "self-serve partner onboarding",
+        description:
+          "A documented way for outside companies to send us their data safely.",
+        impact: "partners integrate without us writing code",
       },
       {
         title: "Security hardening",
-        description: "Remediated credential exposure in log shipping.",
-        impact: "0 secrets in logs",
+        description:
+          "Found passwords leaking into our logs, and stopped it at the source.",
+        impact: "closed a credential leak before anyone found it",
       },
     ],
   },
@@ -290,7 +286,7 @@ const timeline: Chapter[] = [
 export const chapters: Chapter[] = [...timeline].reverse();
 
 export const prologue =
-  "2022 · Where it started: backend lead intern at Duckcart, DevOps intern at Recruit CRM.";
+  "2022 · Where it started: founding engineer at Duckcart, DevOps intern at Recruit CRM.";
 
 /* --- read path -----------------------------------------------------------
    Latencies are the real shape of the RAG read path: cache-first, with the
@@ -406,64 +402,6 @@ export const journeyHops: Hop[] = [
 
 /** Hops skipped when the cache hits — the short-circuit (§6). */
 export const cacheSkips = new Set(["db", "vector", "queue"]);
-
-/* --- changelog (§5.06) --------------------------------------------------- */
-
-export type ChangeKind = "+" | "!" | "#";
-
-export interface Release {
-  version: string;
-  date: string;
-  title: string;
-  scale: "MAJOR" | "MINOR";
-  changes: { kind: ChangeKind; text: string }[];
-}
-
-export const releases: Release[] = [
-  {
-    version: "v3.0.0",
-    date: "jun 2025",
-    title: "senior backend engineer @ delightree",
-    scale: "MAJOR",
-    changes: [
-      { kind: "+", text: "multi-tenant rag over franchise sops" },
-      { kind: "+", text: "integration platform, 5 providers, 4 files to add a sixth" },
-      { kind: "+", text: "support ticketing domain: 17 graphql apis, 6 collections" },
-      { kind: "!", text: "data model migration: 2 queries → 1 $lookup" },
-      { kind: "#", text: "remediated credential exposure in log shipping" },
-    ],
-  },
-  {
-    version: "v2.0.0",
-    date: "sep 2024",
-    title: "software engineer @ playo",
-    scale: "MAJOR",
-    changes: [
-      { kind: "!", text: "leaderboard 4.5s → 50ms" },
-      { kind: "!", text: "geo search 4s → under 1s" },
-      { kind: "+", text: "600k record migration, zero downtime" },
-    ],
-  },
-  {
-    version: "v1.0.0",
-    date: "feb 2023",
-    title: "software engineer @ teal india",
-    scale: "MAJOR",
-    changes: [
-      { kind: "+", text: "real-time analytics over socket.io, sticky sessions" },
-      { kind: "+", text: "legal document extraction, 350+ reports daily" },
-    ],
-  },
-  {
-    version: "v0.1.0",
-    date: "2022",
-    title: "internships @ duckcart, recruit crm",
-    scale: "MINOR",
-    changes: [
-      { kind: "+", text: "backend lead intern; devops and infrastructure intern" },
-    ],
-  },
-];
 
 export interface TreeNode {
   id: string;

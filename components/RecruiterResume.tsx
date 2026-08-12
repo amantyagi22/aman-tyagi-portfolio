@@ -65,7 +65,7 @@ export function RecruiterResume({ onExit }: { onExit?: () => void }) {
                 {c.company}{" "}
                 <span className="font-normal text-[var(--muted)]">— {c.role}</span>
               </p>
-              <p className="font-mono text-xs text-[var(--muted)]">{c.period}</p>
+              <p className="font-mono text-xs text-[var(--muted)]">{c.dates}</p>
             </div>
             <ul className="mt-2 list-disc space-y-1.5 pl-5 text-[var(--muted)]">
               {c.items.map((item) => (
@@ -78,7 +78,7 @@ export function RecruiterResume({ onExit }: { onExit?: () => void }) {
           </div>
         ))}
         <p className="mt-5 text-xs text-[var(--muted)]">
-          Earlier: Backend Lead Intern, Duckcart (2022) · DevOps Engineer Intern,
+          Earlier: Founding Engineer, Duckcart (2022) · DevOps Engineer Intern,
           Recruit CRM (2022–23).
         </p>
 

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Manrope } from "next/font/google";
+import { Caveat, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const manrope = Manrope({
-  variable: "--font-manrope",
+/* Geist Sans + Geist Mono, the pairing the reference layout was designed
+   around — Manrope's rounder terminals read softer against the hairlines */
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
   display: "swap",
 });
@@ -11,6 +13,14 @@ const manrope = Manrope({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+});
+
+/* only used for the marginalia — the asides that point at things */
+const caveat = Caveat({
+  variable: "--font-handwritten",
+  subsets: ["latin"],
+  weight: ["400", "500"],
   display: "swap",
 });
 
@@ -43,7 +53,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} h-full antialiased dark`}
       // the inline script below rewrites this class before React hydrates,
       // which is the intended behaviour, not a mismatch to warn about
       suppressHydrationWarning
@@ -59,7 +69,6 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full font-sans tracking-[-0.01em]">
-        <div className="page-noise" aria-hidden="true" />
         {children}
       </body>
     </html>
