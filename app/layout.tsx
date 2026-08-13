@@ -53,18 +53,19 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} h-full antialiased dark`}
+      // light is the default: no `dark` class unless the visitor picked it
+      className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} h-full antialiased`}
       // the inline script below rewrites this class before React hydrates,
       // which is the intended behaviour, not a mismatch to warn about
       suppressHydrationWarning
     >
       <head>
-        {/* Runs before first paint: corrects the class on <html> so a
-            light-mode visitor never sees a flash of dark. Must be blocking
+        {/* Runs before first paint: adds the class back for a visitor who
+            chose dark, so they never see a flash of light. Must be blocking
             and inline — a deferred script paints too late. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{if(localStorage.getItem('theme')==='light')document.documentElement.classList.remove('dark')}catch(e){}`,
+            __html: `try{if(localStorage.getItem('theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}`,
           }}
         />
       </head>
