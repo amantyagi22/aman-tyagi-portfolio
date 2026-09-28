@@ -42,7 +42,7 @@ export function Overview() {
             </p>
             {/* left-aligned: right-aligning a value that wraps to two lines
                 leaves a ragged left edge that reads as a layout bug */}
-            <p className="font-mono text-[0.8125rem] leading-relaxed text-[var(--text-secondary)] sm:max-w-[52%]">
+            <p className="font-mono text-[0.8125rem] leading-relaxed text-[var(--text-secondary)] sm:w-[52%] sm:shrink-0">
               {area.proof}
             </p>
           </li>

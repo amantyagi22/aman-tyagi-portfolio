@@ -49,7 +49,7 @@ function Contact() {
       <PanelTitle>Contact</PanelTitle>
 
       <p className="max-w-[52ch] text-[0.9375rem] leading-relaxed text-[var(--text-secondary)]">
-        Open to backend and platform engagements. Based in India, working across
+        Open to AI engineering and backend roles. Based in India, working across
         timezones.
       </p>
 

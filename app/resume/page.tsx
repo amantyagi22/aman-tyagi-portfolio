@@ -5,7 +5,7 @@ import { RecruiterResume } from "@/components/RecruiterResume";
 export const metadata: Metadata = {
   title: "Aman Tyagi — Resume",
   description:
-    "Backend engineer: distributed systems, performance engineering, data modeling, and retrieval. Printable resume.",
+    "Senior software engineer: production RAG, LLM agents and multi-tenant backends. Printable resume.",
 };
 
 /* A real URL, not a mode toggle (redesign.md §14). Static, no motion,

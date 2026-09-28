@@ -47,7 +47,7 @@ export function Header() {
               <VerifiedIcon className="size-[18px] shrink-0 text-[var(--verified)]" />
             </div>
             <p className="mt-2.5 font-mono text-[0.8125rem] tracking-[0.06em] text-[var(--ember)]">
-              Senior Backend Engineer
+              AI &amp; Backend Engineer
             </p>
 
             {/* text first, arrow beneath pointing back down-left at the name —

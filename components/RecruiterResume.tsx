@@ -14,7 +14,7 @@ export function RecruiterResume({ onExit }: { onExit?: () => void }) {
             <h1 className="text-2xl font-semibold text-[var(--foreground)]">
               Aman Tyagi
             </h1>
-            <p className="text-[var(--muted)]">Backend Engineer · India</p>
+            <p className="text-[var(--muted)]">Senior Software Engineer · AI &amp; Backend · India</p>
           </div>
           <div className="no-print flex items-center gap-2">
             {onExit ? (
@@ -46,13 +46,16 @@ export function RecruiterResume({ onExit }: { onExit?: () => void }) {
           <a className="underline underline-offset-2" href={links.linkedin}>
             linkedin.com/in/aman-tyagi-700a06190
           </a>
+          <a className="underline underline-offset-2" href={links.site}>
+            amantyagi.me
+          </a>
         </p>
 
         <p className="mt-6 text-[var(--muted)]">
-          Backend engineer with {yearsOfExperience()} years across distributed
-          systems, performance engineering, data modeling, and AI/RAG. Node.js,
-          TypeScript, MongoDB, Redis, GraphQL, AWS. Available for backend
-          consulting.
+          Senior software engineer with {yearsOfExperience()} years building
+          production RAG, LLM agents and multi-tenant backends on Node.js,
+          Python, MongoDB and AWS. Takes features from prototype to production
+          and leads cross-team releases.
         </p>
 
         <h2 className="mt-8 border-b border-[var(--border)] pb-1 font-mono text-xs uppercase tracking-[0.16em] text-[var(--muted)]">

@@ -25,23 +25,23 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
-  title: "Aman Tyagi — Backend Engineer",
+  title: "Aman Tyagi — AI & Backend Engineer",
   description:
-    "Backend engineer building scalable systems, performance-critical infrastructure, and automation platforms.",
-  metadataBase: new URL("https://amantyagi.dev"),
+    "Senior software engineer building production RAG, LLM agents and multi-tenant backends on Node.js, Python and AWS.",
+  metadataBase: new URL("https://www.amantyagi.me"),
   openGraph: {
-    title: "Aman Tyagi — Backend Engineer",
+    title: "Aman Tyagi — AI & Backend Engineer",
     description:
-      "Scalable backend systems, distributed workers, and automation with Node.js and cloud technologies.",
-    url: "https://amantyagi.dev",
+      "Production RAG, LLM agents and multi-tenant backends on Node.js, Python and AWS.",
+    url: "https://www.amantyagi.me",
     siteName: "Aman Tyagi",
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Aman Tyagi — Backend Engineer",
+    title: "Aman Tyagi — AI & Backend Engineer",
     description:
-      "Scalable backend systems, distributed workers, and automation with Node.js and cloud technologies.",
+      "Production RAG, LLM agents and multi-tenant backends on Node.js, Python and AWS.",
   },
 };
 

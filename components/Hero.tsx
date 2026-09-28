@@ -49,7 +49,9 @@ export function Hero() {
         <Slab y={158} label="store" />
       </svg>
 
-      <figcaption className="pointer-events-none absolute right-3 bottom-2 font-mono text-[10px] tracking-wide text-[var(--text-tertiary)] select-none sm:right-4">
+      {/* hidden below sm: the avatar row overlaps the hero there, and the
+          caption would run into the name */}
+      <figcaption className="pointer-events-none absolute hidden sm:block right-3 bottom-2 font-mono text-[10px] tracking-wide text-[var(--text-tertiary)] select-none sm:right-4">
         Fig. 1 — a request, on its way down
       </figcaption>
     </figure>

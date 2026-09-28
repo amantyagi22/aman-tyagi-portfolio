@@ -6,6 +6,18 @@ export function yearsOfExperience(): string {
   return `${Math.floor(years)}+`;
 }
 
+/** "1y 3m" since `start` — for the current role, so it never goes stale. */
+export function durationSince(start: Date): string {
+  const now = new Date();
+  const months =
+    (now.getFullYear() - start.getFullYear()) * 12 +
+    now.getMonth() -
+    start.getMonth();
+  const y = Math.floor(months / 12);
+  const m = months % 12;
+  return [y && `${y}y`, m && `${m}m`].filter(Boolean).join(" ") || "0m";
+}
+
 export interface FocusArea {
   label: string;
   proof: string;
@@ -25,8 +37,12 @@ export const focusAreas: FocusArea[] = [
     proof: "reshaped the data so reads cost half as much",
   },
   {
-    label: "AI & RAG",
-    proof: "search that answers questions from a company's own documents",
+    label: "AI Agents",
+    proof: "an agent that spots which store openings are about to slip",
+  },
+  {
+    label: "RAG & LLM Evals",
+    proof: "answers from a company's own documents, with sources and a test set",
   },
   {
     label: "API Design",
@@ -51,6 +67,7 @@ export const stackList = [
   "graphql · bullmq",
   "aws · docker",
   "weaviate · bedrock",
+  "lambda · sqs",
 ];
 
 /** The two headline proofs, surfaced above the fold (§5, §14). */
@@ -169,7 +186,7 @@ export interface Chapter {
 const timeline: Chapter[] = [
   {
     company: "Teal India",
-    location: "India (On-site)",
+    location: "Bengaluru, India (On-site)",
     role: "Software Engineer",
     type: "Full-time",
     dates: "02.2023 — 08.2024",
@@ -224,18 +241,26 @@ const timeline: Chapter[] = [
     role: "Senior Software Engineer",
     type: "Full-time",
     dates: "06.2025 — present",
-    duration: "1y 2m",
+    duration: durationSince(new Date("2025-06-01")),
     tech: [
       "TypeScript",
+      "Python",
       "GraphQL",
       "Weaviate",
       "AWS Bedrock",
+      "AWS Lambda",
       "BullMQ",
       "BigQuery",
       "MongoDB",
       "Zod",
     ],
     items: [
+      {
+        title: "Launch-risk agent",
+        description:
+          "An AI agent that predicts which franchise openings will run late, ranks what is blocking them and drafts the follow-ups. Took it from my own prototype to beta.",
+        impact: "late openings get flagged before they are late",
+      },
       {
         title: "Multi-tenant RAG engine",
         description:
@@ -245,8 +270,8 @@ const timeline: Chapter[] = [
       {
         title: "Integration platform",
         description:
-          "One shared way to connect outside tools — HubSpot, QuickBooks, Zapier and two more.",
-        impact: "adding a sixth provider takes an afternoon",
+          "One shared way to connect outside tools — HubSpot, QuickBooks, Zapier, Zenoti and Read AI.",
+        impact: "a new provider is four files",
       },
       {
         title: "Async analytics pipeline",
@@ -275,8 +300,20 @@ const timeline: Chapter[] = [
       {
         title: "Security hardening",
         description:
-          "Found passwords leaking into our logs, and stopped it at the source.",
-        impact: "closed a credential leak before anyone found it",
+          "Found and closed three security gaps, including passwords leaking into our logs.",
+        impact: "closed them before anyone else found them",
+      },
+      {
+        title: "Agent tooling",
+        description:
+          "A prototype that lets AI agents use the product's own features as tools, plus a test set for grading LLM answers.",
+        impact: "agents got access without backend changes",
+      },
+      {
+        title: "Release integration",
+        description:
+          "Reviewed and merged the team's work across four repositories, and wrote the design docs.",
+        impact: "50+ teammate PRs reviewed and shipped",
       },
     ],
   },
@@ -418,6 +455,7 @@ export type Branch = (typeof BRANCHES)[number];
 
 export const treeNodes: TreeNode[] = [
   { id: "js", label: "JavaScript / TypeScript", note: "The root node. Everything else hangs off this.", usedAt: "every role since 2022", branch: "core" },
+  { id: "python", label: "Python / FastAPI", note: "Eval tooling and the golden-dataset loader.", usedAt: "Delightree", branch: "core" },
   { id: "node", label: "Node.js / Express", note: "Default runtime. Services, workers, and CLIs.", usedAt: "Teal, Playo, Delightree", branch: "core" },
   { id: "gql", label: "GraphQL (Apollo)", note: "17 production APIs in the ticketing domain alone.", usedAt: "Delightree", branch: "core" },
   { id: "dist", label: "Distributed Patterns", note: "Sticky sessions, fan-out, idempotency, dual-write cutovers.", usedAt: "Teal, Playo, Delightree", branch: "core" },
@@ -429,11 +467,14 @@ export const treeNodes: TreeNode[] = [
   { id: "bull", label: "BullMQ", note: "Async fan-out so the read path never waits on analytics.", usedAt: "Delightree", branch: "async" },
   { id: "cron", label: "Cron", note: "Scheduled triggers for the analytics pipeline.", usedAt: "Delightree", branch: "async" },
   { id: "webhooks", label: "Webhooks", note: "Five production integrations' worth, normalized behind one interface.", usedAt: "Delightree", branch: "async" },
-  { id: "aws", label: "AWS", note: "Bedrock, S3, SSM, DynamoDB.", usedAt: "Delightree", branch: "platform" },
+  { id: "aws", label: "AWS", note: "Lambda, SQS, EventBridge, Bedrock, S3, DynamoDB.", usedAt: "Delightree", branch: "platform" },
   { id: "docker", label: "Docker", note: "Same box everywhere, from laptop to production.", usedAt: "Teal, Playo, Delightree", branch: "platform" },
   { id: "rag", label: "RAG", note: "Multi-tenant retrieval with two-layer permission isolation.", usedAt: "Delightree", branch: "ai" },
   { id: "vector", label: "Vector Search", note: "Hybrid retrieval: keyword and embedding scores combined.", usedAt: "Delightree", branch: "ai" },
-  { id: "bedrock", label: "AWS Bedrock", note: "Model access for answer synthesis, with session memory.", usedAt: "Delightree", branch: "ai" },
+  { id: "bedrock", label: "AWS Bedrock", note: "Claude and Titan, for answer synthesis and the launch-risk agent.", usedAt: "Delightree", branch: "ai" },
+  { id: "agents", label: "AI Agents", note: "Nightly EventBridge → Lambda → SQS pipeline that scores launch risk.", usedAt: "Delightree", branch: "ai" },
+  { id: "mcp", label: "MCP", note: "Product operations exposed as agent tools via JWT pass-through.", usedAt: "Delightree", branch: "ai" },
+  { id: "evals", label: "LLM Evals / Langfuse", note: "Golden datasets and prompt tracing.", usedAt: "Delightree", branch: "ai" },
 ];
 
 export const treeEdges: [string, string][] = [
@@ -455,6 +496,10 @@ export const treeEdges: [string, string][] = [
   ["rag", "vector"],
   ["vector", "bedrock"],
   ["aws", "bedrock"],
+  ["js", "python"],
+  ["bedrock", "agents"],
+  ["agents", "mcp"],
+  ["rag", "evals"],
 ];
 
 export const writing = [
@@ -467,5 +512,6 @@ export const writing = [
 export const links = {
   github: "https://github.com/amantyagi22",
   linkedin: "https://www.linkedin.com/in/aman-tyagi-700a06190/",
+  site: "https://www.amantyagi.me",
   email: "mailto:amantyagi2k@gmail.com",
 };

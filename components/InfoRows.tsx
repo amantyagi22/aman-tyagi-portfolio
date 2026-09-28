@@ -6,7 +6,7 @@ import {
   MarsIcon,
   ClockIcon,
 } from "lucide-react";
-import { links } from "@/lib/data";
+import { links, yearsOfExperience } from "@/lib/data";
 
 /* The at-a-glance block: role, location, contact. Icons come from lucide
    rather than hand-rolled paths — its geometry is optically corrected for
@@ -17,13 +17,13 @@ const ROWS: {
   text: string;
   href?: string;
 }[] = [
-  { icon: <CodeXmlIcon />, text: "Senior Backend Engineer @Delightree" },
+  { icon: <CodeXmlIcon />, text: "Senior Software Engineer @Delightree" },
   { icon: <MapPinIcon />, text: "India · IST (UTC+5:30)" },
   { icon: <MailIcon />, text: "amantyagi2k@gmail.com", href: links.email },
-  { icon: <ClockIcon />, text: "3+ years shipping production systems" },
+  { icon: <ClockIcon />, text: `${yearsOfExperience()} years shipping production systems` },
   {
     icon: <BriefcaseBusinessIcon />,
-    text: "Open to backend & platform roles",
+    text: "Open to AI & backend roles",
   },
   { icon: <MarsIcon />, text: "he/him" },
 ];
