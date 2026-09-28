@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { yearsOfExperience } from "@/lib/data";
 import { SocialLinks } from "@/components/SocialLinks";
 import { InfoRows } from "@/components/InfoRows";
 import { VerifiedIcon } from "@/components/ui/VerifiedIcon";
@@ -73,7 +72,7 @@ export function Header() {
       <div className="screen-line-top relative flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <SocialLinks />
         <span className="t-label">
-          {yearsOfExperience()} yrs · India · open to offers
+          India · open to offers
         </span>
 
         <HandwrittenNote className="top-0 right-full mr-5 hidden w-20 flex-col items-end xl:flex">

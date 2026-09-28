@@ -23,19 +23,9 @@ export interface FocusArea {
   proof: string;
 }
 
+/* AI first, to match the headline. Four rows: the 90× stat above already
+   carries the leaderboard, so performance leans on the search win instead. */
 export const focusAreas: FocusArea[] = [
-  {
-    label: "Distributed Systems",
-    proof: "queues and workers that keep the slow work off the request path",
-  },
-  {
-    label: "Performance Engineering",
-    proof: "took the busiest screen from 4.5 seconds to 50 milliseconds",
-  },
-  {
-    label: "Data Modeling",
-    proof: "reshaped the data so reads cost half as much",
-  },
   {
     label: "AI Agents",
     proof: "an agent that spots which store openings are about to slip",
@@ -45,8 +35,12 @@ export const focusAreas: FocusArea[] = [
     proof: "answers from a company's own documents, with sources and a test set",
   },
   {
-    label: "API Design",
-    proof: "APIs other teams and outside partners build on",
+    label: "Performance Engineering",
+    proof: "geospatial search from 4 seconds to under 1",
+  },
+  {
+    label: "Platform & APIs",
+    proof: "integrations, queues and public APIs other teams build on",
   },
 ];
 
@@ -57,7 +51,7 @@ export const focusAreas: FocusArea[] = [
 export const scaleFacts: { value: string; label: string }[] = [
   { value: "600k+", label: "records migrated" },
   { value: "90×", label: "latency reduction" },
-  { value: "350+", label: "daily automated runs" },
+  { value: "350+", label: "legal reports a day" },
   { value: "17", label: "APIs, one domain" },
 ];
 
@@ -288,8 +282,8 @@ const timeline: Chapter[] = [
       {
         title: "Data-model migration",
         description:
-          "Restructured how the data was stored so the app could find it faster.",
-        impact: "halved the database work per read",
+          "Flattened nested records into one collection, so the app reads them in one go.",
+        impact: "two round trips became one $lookup",
       },
       {
         title: "Partner ingestion API",
