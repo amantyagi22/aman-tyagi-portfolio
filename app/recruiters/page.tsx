@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { Arrow, PageHeader, PageShell, SocialIcons, wrap } from "@/components/Page";
+import {
+  Arrow,
+  PageHeader,
+  PageShell,
+  SocialIcons,
+  wrap,
+} from "@/components/Page";
+import { Roll, Tilt } from "@/components/Motion";
 import { pageMeta } from "@/lib/seo";
 
 export const metadata = pageMeta(
@@ -68,25 +75,31 @@ export default function RecruitersPage() {
       <section aria-label="Proof" className={`${wrap} mt-12 md:mt-16`}>
         <ul className="grid gap-3 md:grid-cols-3">
           {PROOF.map((p, i) => (
-            <li key={p.value}>
-              <Link
-                href={p.href}
-                className={`press flex h-full min-h-56 flex-col justify-between gap-8 rounded-[2rem] p-6 md:p-7 ${
-                  i === 1 ? "bg-orange text-ink" : "bg-ink text-paper"
-                }`}
-              >
-                <span className="flex items-start justify-between gap-4">
-                  <span className="display text-[clamp(3rem,5vw,4.5rem)] tabular-nums">
-                    {p.value}
+            <li
+              key={p.value}
+              className="reveal"
+              style={{ "--i": i } as React.CSSProperties}
+            >
+              <Tilt className="h-full">
+                <Link
+                  href={p.href}
+                  className={`press flex h-full min-h-56 flex-col justify-between gap-8 rounded-[2rem] p-6 md:p-7 ${
+                    i === 1 ? "bg-orange text-ink" : "bg-ink text-paper"
+                  }`}
+                >
+                  <span className="flex items-start justify-between gap-4">
+                    <span className="display text-[clamp(3rem,5vw,4.5rem)] tabular-nums">
+                      <Roll text={p.value} />
+                    </span>
+                    <Arrow
+                      className={
+                        i === 1 ? "bg-ink text-paper" : "bg-paper text-ink"
+                      }
+                    />
                   </span>
-                  <Arrow
-                    className={
-                      i === 1 ? "bg-ink text-paper" : "bg-paper text-ink"
-                    }
-                  />
-                </span>
-                <span className="max-w-[28ch] leading-snug">{p.label}</span>
-              </Link>
+                  <span className="max-w-[28ch] leading-snug">{p.label}</span>
+                </Link>
+              </Tilt>
             </li>
           ))}
         </ul>

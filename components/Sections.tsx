@@ -7,6 +7,7 @@ import {
   wide,
   wrap,
 } from "@/components/Page";
+import { DotField, Roll, Tilt } from "@/components/Motion";
 import {
   branchTitles,
   chapters,
@@ -46,7 +47,8 @@ function Heading({
    fits the first screen and the numbers peek in under it. */
 export function Hero() {
   return (
-    <section className={`${wide} pt-6 md:pt-8`}>
+    <section className={`${wide} relative pt-6 md:pt-8`}>
+      <DotField className="pointer-events-none absolute inset-0 -z-10 size-full [mask-image:radial-gradient(ellipse_at_top_right,black,transparent_70%)]" />
       <p className="label rise flex items-center gap-2">
         <span className="breathe size-2 rounded-full bg-orange" />
         Open to offers, available now
@@ -98,13 +100,14 @@ export function Numbers() {
   return (
     <section className={`${wrap} mt-12 md:mt-14`} aria-label="In numbers">
       <ul className="grid grid-cols-2 border-y border-line md:grid-cols-4">
-        {scaleFacts.map((f) => (
+        {scaleFacts.map((f, i) => (
           <li
             key={f.label}
-            className="border-line py-8 pr-4 even:border-l even:pl-5 [&:nth-child(-n+2)]:border-b md:py-10 md:pl-8 md:[&:not(:first-child)]:border-l md:first:pl-0 md:[&:nth-child(-n+2)]:border-b-0"
+            style={{ "--i": i } as React.CSSProperties}
+            className="reveal border-line py-8 pr-4 even:border-l even:pl-5 [&:nth-child(-n+2)]:border-b md:py-10 md:pl-8 md:[&:not(:first-child)]:border-l md:first:pl-0 md:[&:nth-child(-n+2)]:border-b-0"
           >
             <p className="display text-[clamp(3rem,6vw,5.5rem)] tabular-nums">
-              {f.value.replace(/[+×]$/, "")}
+              <Roll text={f.value.replace(/[+×]$/, "")} />
               <sup className="ml-[0.04em] align-[0.9em] text-[0.4em] text-orange">
                 {f.value.match(/[+×]$/)?.[0]}
               </sup>
@@ -249,40 +252,46 @@ export function SelectedWork() {
           </Heading>
           <ul className="mt-12 grid gap-3 md:mt-16 lg:grid-cols-3">
             {projects.map((p, i) => (
-              <li key={p.slug}>
-                <Link
-                  href={`/work/${p.slug}`}
-                  className="group flex h-full flex-col gap-8 rounded-[1.5rem] bg-paper/[0.06] p-6 ring-1 ring-paper/10 transition-colors duration-200 hover:bg-orange hover:text-ink hover:ring-orange md:p-8"
-                >
-                  <span className="flex items-start justify-between gap-4">
-                    <span className="label text-paper/55 transition-colors group-hover:text-ink/70">
-                      {String(i + 1).padStart(2, "0")} · {p.context}
-                    </span>
-                    <Arrow className="bg-paper text-ink group-hover:bg-ink group-hover:text-paper" />
-                  </span>
-                  <span
-                    aria-hidden="true"
-                    className="flex h-52 flex-col justify-center gap-2 rounded-2xl bg-paper p-4 text-sm text-ink"
+              <li
+                key={p.slug}
+                className="reveal"
+                style={{ "--i": i } as React.CSSProperties}
+              >
+                <Tilt className="h-full rounded-[1.5rem]">
+                  <Link
+                    href={`/work/${p.slug}`}
+                    className="group flex h-full flex-col gap-8 rounded-[1.5rem] bg-paper/[0.06] p-6 ring-1 ring-paper/10 transition-colors duration-200 hover:bg-orange hover:text-ink hover:ring-orange md:p-8"
                   >
-                    <Sketch slug={p.slug} />
-                  </span>
-                  <span>
-                    <span className="block text-[clamp(1.75rem,2.6vw,2.5rem)] leading-[1.02] font-semibold tracking-[-0.04em] text-balance">
-                      {p.title}
+                    <span className="flex items-start justify-between gap-4">
+                      <span className="label text-paper/55 transition-colors group-hover:text-ink/70">
+                        {String(i + 1).padStart(2, "0")} · {p.context}
+                      </span>
+                      <Arrow className="bg-paper text-ink group-hover:bg-ink group-hover:text-paper" />
                     </span>
-                    <span className="mt-4 block leading-relaxed text-pretty text-paper/70 transition-colors group-hover:text-ink/80">
-                      {p.summary}
+                    <span
+                      aria-hidden="true"
+                      className="flex h-52 flex-col justify-center gap-2 rounded-2xl bg-paper p-4 text-sm text-ink"
+                    >
+                      <Sketch slug={p.slug} />
                     </span>
-                  </span>
-                  <span className="mt-auto block border-t border-paper/15 pt-6 transition-colors group-hover:border-ink/20">
-                    <span className="display block text-[clamp(2.75rem,4vw,3.75rem)] text-orange transition-colors group-hover:text-ink">
-                      {p.proof[0].value}
+                    <span>
+                      <span className="block text-[clamp(1.75rem,2.6vw,2.5rem)] leading-[1.02] font-semibold tracking-[-0.04em] text-balance">
+                        {p.title}
+                      </span>
+                      <span className="mt-4 block leading-relaxed text-pretty text-paper/70 transition-colors group-hover:text-ink/80">
+                        {p.summary}
+                      </span>
                     </span>
-                    <span className="label mt-2 block text-paper/60 transition-colors group-hover:text-ink/70">
-                      {p.proof[0].label}
+                    <span className="mt-auto block border-t border-paper/15 pt-6 transition-colors group-hover:border-ink/20">
+                      <span className="display block text-[clamp(2.75rem,4vw,3.75rem)] text-orange transition-colors group-hover:text-ink">
+                        {p.proof[0].value}
+                      </span>
+                      <span className="label mt-2 block text-paper/60 transition-colors group-hover:text-ink/70">
+                        {p.proof[0].label}
+                      </span>
                     </span>
-                  </span>
-                </Link>
+                  </Link>
+                </Tilt>
               </li>
             ))}
           </ul>
@@ -402,8 +411,12 @@ export function Stack() {
     <section id="stack" className={`${wrap} mt-24 md:mt-32`}>
       <Heading label="Stack">What I build with.</Heading>
       <ul className="mt-12 grid gap-3 sm:grid-cols-2 md:mt-16 lg:grid-cols-3">
-        {branchTitles.map(([branch, title]) => (
-          <li key={branch} className={`${tile} @container bg-white`}>
+        {branchTitles.map(([branch, title], i) => (
+          <li
+            key={branch}
+            className={`${tile} reveal @container bg-white`}
+            style={{ "--i": i % 3 } as React.CSSProperties}
+          >
             <h3 className="label text-soft">{title}</h3>
             {/* sized off the tile, not the window, so the longest unbroken item always fits */}
             <p className="text-[clamp(1.25rem,8cqi,1.75rem)] leading-[1.15] font-medium tracking-[-0.035em]">
@@ -419,19 +432,21 @@ export function Stack() {
             </p>
           </li>
         ))}
-        <li>
-          <Link
-            href="/resume"
-            className={`${tile} group relative h-full overflow-hidden bg-orange`}
-          >
-            <Shapes className="w-48 self-end" stroke="var(--ink)" />
-            <span className="flex items-end justify-between gap-4">
-              <span className="text-[clamp(1.25rem,1.75vw,1.5rem)] leading-[1.15] font-medium tracking-[-0.035em]">
-                Where each one shipped.
+        <li className="reveal" style={{ "--i": 2 } as React.CSSProperties}>
+          <Tilt className="h-full">
+            <Link
+              href="/resume"
+              className={`${tile} group relative h-full overflow-hidden bg-orange`}
+            >
+              <Shapes className="w-48 self-end" stroke="var(--ink)" />
+              <span className="flex items-end justify-between gap-4">
+                <span className="text-[clamp(1.25rem,1.75vw,1.5rem)] leading-[1.15] font-medium tracking-[-0.035em]">
+                  Where each one shipped.
+                </span>
+                <Arrow />
               </span>
-              <Arrow />
-            </span>
-          </Link>
+            </Link>
+          </Tilt>
         </li>
       </ul>
     </section>

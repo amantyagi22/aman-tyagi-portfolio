@@ -48,6 +48,31 @@ body {
 /* In the components layer so a utility (leading-*, text-*) can still
    override them where one element needs to. */
 @layer components {
+  /* the light under a tilted card follows the cursor */
+  .tilt {
+    position: relative;
+    border-radius: 2rem;
+    transition: transform 500ms var(--ease-out);
+    will-change: transform;
+  }
+  .tilt::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      28rem circle at var(--px, 50%) var(--py, 50%),
+      rgb(255 255 255 / 0.14),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+  .tilt:hover::after {
+    opacity: 1;
+  }
+
   /* the display face: Geist pulled tight until it reads as a grotesk */
   .display {
     font-weight: 700;
@@ -71,8 +96,11 @@ body {
 
 /* press feedback on anything pill shaped */
 .press {
-  transition: transform 160ms var(--ease-out), background-color 160ms ease,
-    color 160ms ease, border-color 160ms ease;
+  transition:
+    transform 160ms var(--ease-out),
+    background-color 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
 }
 .press:active {
   transform: scale(0.97);
@@ -81,10 +109,17 @@ body {
 /* the nav's glass: what scrolls under it stays visible, blurred and a little
    richer, with a lit top edge and a soft inner rim like a lens */
 .glass {
-  background: linear-gradient(180deg, rgb(255 255 255 / 0.75), rgb(255 255 255 / 0.4));
+  background: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.75),
+    rgb(255 255 255 / 0.4)
+  );
   backdrop-filter: blur(16px) saturate(1.8);
-  box-shadow: inset 0 1.5px 0 rgb(255 255 255), inset 0 -1px 1px rgb(22 21 19 / 0.06),
-    0 0 0 1px rgb(22 21 19 / 0.09), 0 2px 4px -1px rgb(22 21 19 / 0.08),
+  box-shadow:
+    inset 0 1.5px 0 rgb(255 255 255),
+    inset 0 -1px 1px rgb(22 21 19 / 0.06),
+    0 0 0 1px rgb(22 21 19 / 0.09),
+    0 2px 4px -1px rgb(22 21 19 / 0.08),
     0 14px 36px -14px rgb(22 21 19 / 0.35);
 }
 @media (prefers-reduced-transparency: reduce) {
@@ -113,6 +148,42 @@ body {
 .rise {
   animation: rise 700ms var(--ease-out) both;
   animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+/* cards rise as they scroll in, scrubbed by scroll, staggered by --i.
+   Pure CSS: where view timelines aren't supported they just sit there. */
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+}
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal both cubic-bezier(0.22, 1, 0.36, 1);
+    animation-timeline: view();
+    animation-range: entry calc(var(--i, 0) * 6%) entry
+      calc(80% + var(--i, 0) * 6%);
+  }
+}
+
+/* numbers roll in a character at a time, the first time they're seen */
+@keyframes roll {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(0.25em);
+  }
+}
+.roll > span:not(.sr-only) {
+  display: inline-block;
+}
+.roll[data-armed]:not([data-in]) > span {
+  opacity: 0;
+}
+.roll[data-in] > span {
+  animation: roll 600ms var(--ease-out) both;
+  animation-delay: calc(var(--i) * 70ms);
 }
 
 @keyframes marquee {
@@ -156,7 +227,9 @@ details::details-content {
   block-size: 0;
   opacity: 0;
   overflow-y: clip;
-  transition: block-size 500ms var(--ease-out), opacity 400ms ease,
+  transition:
+    block-size 500ms var(--ease-out),
+    opacity 400ms ease,
     content-visibility 500ms allow-discrete;
 }
 details[open]::details-content {
