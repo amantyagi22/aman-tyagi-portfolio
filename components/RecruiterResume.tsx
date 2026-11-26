@@ -18,6 +18,7 @@ const prettyDates = (d: string) =>
 
 const CONTACT = [
   { label: links.email.replace(/^mailto:/, ""), href: links.email },
+  { label: "+91 639 695 2072", href: links.phone },
   { label: "github.com/amantyagi22", href: links.github },
   {
     label: links.linkedin.replace(/^https:\/\/(www\.)?/, "").replace(/\/$/, ""),
@@ -31,7 +32,7 @@ export function PrintButton() {
     <button
       type="button"
       onClick={() => window.print()}
-      className="press label rounded-full border border-line px-3 py-1.5 hover:border-ink"
+      className="press label rounded-full border border-line px-3 py-1.5 whitespace-nowrap hover:border-ink"
     >
       Save PDF
     </button>

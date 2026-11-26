@@ -150,21 +150,21 @@ body {
   animation-delay: calc(var(--i, 0) * 70ms);
 }
 
-/* cards rise as they scroll in, scrubbed by scroll, staggered by --i.
-   Pure CSS: where view timelines aren't supported they just sit there. */
+/* cards rise in once they are well into view, staggered by --i. JS arms
+   only the ones below the fold, so without JS everything just shows. */
 @keyframes reveal {
   from {
     opacity: 0;
-    transform: translateY(28px);
+    transform: translateY(40px);
   }
 }
-@supports (animation-timeline: view()) {
-  .reveal {
-    animation: reveal both cubic-bezier(0.22, 1, 0.36, 1);
-    animation-timeline: view();
-    animation-range: entry calc(var(--i, 0) * 6%) entry
-      calc(80% + var(--i, 0) * 6%);
-  }
+.reveal[data-armed] {
+  opacity: 0;
+}
+.reveal[data-armed][data-in] {
+  opacity: 1;
+  animation: reveal 800ms var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 90ms);
 }
 
 /* numbers roll in a character at a time. CSS plays it on first paint, just

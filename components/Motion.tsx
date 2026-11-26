@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 const fine = () =>
@@ -41,6 +42,34 @@ export function Roll({ text }: { text: string }) {
       ))}
     </span>
   );
+}
+
+/* Cards below the fold wait hidden and rise in, staggered by --i, once
+   they are well into view. Without JS (or with reduced motion) they just
+   show. Re-runs per route so client navigations get it too. */
+export function Reveal() {
+  const path = usePathname();
+  useEffect(() => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const els = [...document.querySelectorAll<HTMLElement>(".reveal")].filter(
+      (el) => el.getBoundingClientRect().top > innerHeight,
+    );
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          (e.target as HTMLElement).dataset.in = "";
+          io.unobserve(e.target);
+        }),
+      { rootMargin: "0px 0px -15% 0px" },
+    );
+    els.forEach((el) => {
+      el.dataset.armed = "";
+      io.observe(el);
+    });
+    return () => io.disconnect();
+  }, [path]);
+  return null;
 }
 
 /* A faint dot grid that brightens around the cursor. Static on touch and

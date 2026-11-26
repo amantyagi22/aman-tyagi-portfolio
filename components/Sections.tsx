@@ -260,7 +260,7 @@ export function SelectedWork() {
                 <Tilt className="h-full rounded-[1.5rem]">
                   <Link
                     href={`/work/${p.slug}`}
-                    className="group flex h-full flex-col gap-8 rounded-[1.5rem] bg-paper/[0.06] p-6 ring-1 ring-paper/10 transition-colors duration-200 hover:bg-orange hover:text-ink hover:ring-orange md:p-8"
+                    className="group flex h-full flex-col gap-6 rounded-[1.5rem] bg-paper/[0.06] p-6 ring-1 ring-paper/10 transition-colors duration-200 hover:bg-orange hover:text-ink hover:ring-orange md:p-7"
                   >
                     <span className="flex items-start justify-between gap-4">
                       <span className="label text-paper/55 transition-colors group-hover:text-ink/70">
@@ -270,20 +270,20 @@ export function SelectedWork() {
                     </span>
                     <span
                       aria-hidden="true"
-                      className="flex h-52 flex-col justify-center gap-2 rounded-2xl bg-paper p-4 text-sm text-ink"
+                      className="flex h-44 flex-col justify-center gap-2 rounded-2xl bg-paper p-4 text-sm text-ink"
                     >
                       <Sketch slug={p.slug} />
                     </span>
                     <span>
-                      <span className="block text-[clamp(1.75rem,2.6vw,2.5rem)] leading-[1.02] font-semibold tracking-[-0.04em] text-balance">
+                      <span className="block text-[clamp(1.625rem,2.2vw,2.125rem)] leading-[1.02] font-semibold tracking-[-0.04em] text-balance">
                         {p.title}
                       </span>
-                      <span className="mt-4 block leading-relaxed text-pretty text-paper/70 transition-colors group-hover:text-ink/80">
+                      <span className="mt-3 block leading-relaxed text-pretty text-paper/70 transition-colors group-hover:text-ink/80">
                         {p.summary}
                       </span>
                     </span>
-                    <span className="mt-auto block border-t border-paper/15 pt-6 transition-colors group-hover:border-ink/20">
-                      <span className="display block text-[clamp(2.75rem,4vw,3.75rem)] text-orange transition-colors group-hover:text-ink">
+                    <span className="mt-auto block border-t border-paper/15 pt-5 transition-colors group-hover:border-ink/20">
+                      <span className="display block text-[clamp(2.5rem,3.4vw,3.25rem)] text-orange transition-colors group-hover:text-ink">
                         {p.proof[0].value}
                       </span>
                       <span className="label mt-2 block text-paper/60 transition-colors group-hover:text-ink/70">

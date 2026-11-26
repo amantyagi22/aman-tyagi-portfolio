@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { Reveal } from "@/components/Motion";
 import "./globals.css";
 
 /* Geist everywhere: pulled tight for display, plain for text */
@@ -40,7 +41,10 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full font-sans">{children}</body>
+      <body className="min-h-full font-sans">
+        {children}
+        <Reveal />
+      </body>
     </html>
   );
 }

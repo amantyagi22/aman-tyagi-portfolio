@@ -14,10 +14,10 @@ export const metadata = pageMeta(
 export default function ResumePage() {
   return (
     <div className="min-h-[100dvh]">
-      <div className="no-print mx-auto flex w-full max-w-6xl items-center justify-between px-5 pt-5 md:px-10">
+      <div className="no-print mx-auto flex w-full max-w-6xl items-center justify-between gap-2 px-5 pt-5 md:px-10">
         <Link
           href="/"
-          className="press label rounded-full border border-line px-3 py-1.5 hover:border-ink"
+          className="press label rounded-full border border-line px-3 py-1.5 whitespace-nowrap hover:border-ink"
         >
           ← Aman Tyagi
         </Link>
@@ -25,7 +25,7 @@ export default function ResumePage() {
           <PrintButton />
           <a
             href={links.email}
-            className="press rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-paper hover:bg-orange"
+            className="press rounded-full bg-ink px-4 py-2.5 text-sm whitespace-nowrap max-[400px]:hidden font-medium text-paper hover:bg-orange"
           >
             Get in touch
           </a>

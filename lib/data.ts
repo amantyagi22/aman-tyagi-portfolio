@@ -339,4 +339,5 @@ export const links = {
   linkedin: "https://www.linkedin.com/in/aman-tyagi-700a06190/",
   site: "https://www.amantyagi.me",
   email: "mailto:amantyagi2k@gmail.com",
+  phone: "tel:+916396952072",
 };
