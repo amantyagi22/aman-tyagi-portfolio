@@ -1,0 +1,28 @@
+# Aman Tyagi
+
+> AI & Backend Engineer in India (IST), open to remote. Senior Software Engineer at Delightree. Looking for SDE 2, AI engineer and backend engineer roles. Builds production RAG, LLM agents and multi-tenant backends on Node.js, TypeScript, Python, MongoDB and AWS.
+
+## Pages
+
+- [Home](https://www.amantyagi.me/): experience, incidents and stack
+- [For recruiters](https://www.amantyagi.me/recruiters): role, target roles, location, availability and top proof points
+- [Resume](https://www.amantyagi.me/resume): printable resume
+- [How I build](https://www.amantyagi.me/how-i-build): six rules for shipping LLM features
+
+## Case studies
+
+- [AI Debugging Simulator](https://www.amantyagi.me/work/debugging-simulator): scores how you investigate a production incident, with AI coaching. Public: https://debugging-simulator.vercel.app, https://github.com/amantyagi22/debugging-simulator
+- [Launch-risk agent](https://www.amantyagi.me/work/launch-risk-agent): Python agent on a nightly EventBridge, Lambda and SQS pipeline that predicts late openings and ranks blockers with Bedrock LLMs. Under NDA, described generically.
+- [Multi-tenant RAG assistant](https://www.amantyagi.me/work/rag-assistant): Weaviate hybrid search, Bedrock, two layers of tenant isolation, citation confidence floors and Langfuse tracing. Under NDA, described generically.
+
+## Experience
+
+- Delightree, Senior Software Engineer, June 2025 - present
+- Playo, Software Engineer, September 2024 - June 2025: leaderboard 4.5s to 50ms (90x); geospatial search 4s to under 1s; 600,000+ users migrated from CometChat to SendBird in under 50 minutes with zero downtime
+- Teal India, Software Engineer, February 2023 - August 2024: 350+ legal reports a day; sub-second live analytics on Socket.io
+
+## Contact
+
+- Email: amantyagi2k@gmail.com
+- GitHub: https://github.com/amantyagi22
+- LinkedIn: https://www.linkedin.com/in/aman-tyagi-700a06190/

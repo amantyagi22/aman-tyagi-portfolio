@@ -1,100 +1,121 @@
 "use client";
 
-import { Container } from "@/components/ui/Container";
-import { chapters, focusAreas, links, treeNodes, writing, yearsOfExperience } from "@/lib/data";
+import {
+  branchTitles,
+  chapters,
+  focusAreas,
+  links,
+  treeNodes,
+  yearsOfExperience,
+} from "@/lib/data";
 
-const branches = [...new Set(treeNodes.map((n) => n.branch))];
+const MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ");
+/* "06.2025 - present" reads as "Jun 2025 - Present" */
+const prettyDates = (d: string) =>
+  d
+    .replace(/(\d{2})\.(\d{4})/g, (_, m, y) => `${MONTHS[Number(m) - 1]} ${y}`)
+    .replace("present", "Present");
 
-export function RecruiterResume({ onExit }: { onExit?: () => void }) {
+const CONTACT = [
+  { label: links.email.replace(/^mailto:/, ""), href: links.email },
+  { label: "github.com/amantyagi22", href: links.github },
+  {
+    label: links.linkedin.replace(/^https:\/\/(www\.)?/, "").replace(/\/$/, ""),
+    href: links.linkedin,
+  },
+  { label: "amantyagi.me", href: links.site },
+];
+
+export function PrintButton() {
   return (
-    <Container>
-      <div className="mx-auto max-w-3xl py-12 text-sm leading-relaxed">
-        <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-semibold text-[var(--foreground)]">
-              Aman Tyagi
-            </h1>
-            <p className="text-[var(--muted)]">Senior Software Engineer · AI &amp; Backend · India</p>
-          </div>
-          <div className="no-print flex items-center gap-2">
-            {onExit ? (
-              <button
-                type="button"
-                onClick={onExit}
-                className="rounded-full border border-[var(--border)] px-4 py-1.5 text-xs font-mono text-[var(--muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
+    <button
+      type="button"
+      onClick={() => window.print()}
+      className="press label rounded-full border border-line px-3 py-1.5 hover:border-ink"
+    >
+      Save PDF
+    </button>
+  );
+}
+
+/* A Swiss row, like the rest of the site: label left, content right. */
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <section className="grid gap-5 border-t border-line py-10 md:grid-cols-12 md:gap-10 print:block print:py-5">
+      <h2 className="label pt-1.5 text-soft md:col-span-3 print:mb-4 print:pt-0">{label}</h2>
+      <div className="min-w-0 md:col-span-9">{children}</div>
+    </section>
+  );
+}
+
+export function RecruiterResume() {
+  return (
+    <div className="mx-auto w-full max-w-6xl px-5 pt-14 pb-20 md:px-10 md:pt-20 print:p-0">
+      <header className="pb-12 print:pb-6">
+        <h1 className="display text-[clamp(3.25rem,8vw,6rem)]">Aman Tyagi</h1>
+        <p className="mt-5 text-xl font-medium tracking-[-0.02em] md:text-2xl">
+          Senior Software Engineer, AI &amp; Backend
+          <span className="text-soft"> · India</span>
+        </p>
+        <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-[0.9375rem] text-[var(--text-secondary)]">
+          {CONTACT.map((c) => (
+            <li key={c.href}>
+              <a
+                href={c.href}
+                className="underline decoration-line underline-offset-4 hover:text-ink hover:decoration-orange"
               >
-                ← Back to site
-              </button>
-            ) : null}
-            <button
-              type="button"
-              onClick={() => window.print()}
-              className="rounded-full border border-[var(--border)] px-4 py-1.5 text-xs font-mono text-[var(--muted)] transition-colors hover:border-[var(--border-strong)] hover:text-[var(--foreground)]"
-            >
-              Print / Save PDF
-            </button>
-          </div>
-        </div>
-
-        <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--muted)]">
-          <a className="underline underline-offset-2" href={links.email}>
-            amantyagi2k@gmail.com
-          </a>
-          <a className="underline underline-offset-2" href={links.github}>
-            github.com/amantyagi22
-          </a>
-          <a className="underline underline-offset-2" href={links.linkedin}>
-            linkedin.com/in/aman-tyagi-700a06190
-          </a>
-          <a className="underline underline-offset-2" href={links.site}>
-            amantyagi.me
-          </a>
+                {c.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-8 max-w-[58ch] text-lg leading-relaxed text-pretty md:text-xl">
+          {yearsOfExperience()} years building production RAG, LLM agents and
+          multi-tenant backends on Node.js, Python, MongoDB and AWS. I take
+          features from prototype to production and lead cross-team releases.
         </p>
+      </header>
 
-        <p className="mt-6 text-[var(--muted)]">
-          Senior software engineer with {yearsOfExperience()} years building
-          production RAG, LLM agents and multi-tenant backends on Node.js,
-          Python, MongoDB and AWS. Takes features from prototype to production
-          and leads cross-team releases.
-        </p>
-
-        <h2 className="mt-8 border-b border-[var(--border)] pb-1 font-mono text-xs uppercase tracking-[0.16em] text-[var(--muted)]">
-          Experience
-        </h2>
-        {chapters.map((c) => (
-          <div key={c.company} className="mt-5">
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <p className="font-semibold text-[var(--foreground)]">
-                {c.company}{" "}
-                <span className="font-normal text-[var(--muted)]">— {c.role}</span>
+      <Row label="Experience">
+        <div className="space-y-14 print:space-y-8">
+          {chapters.map((c) => (
+            <article key={c.company}>
+              <div className="flex break-after-avoid flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+                <h3 className="text-2xl font-semibold tracking-[-0.03em]">{c.company}</h3>
+                <p className="label text-soft tabular-nums">{prettyDates(c.dates)}</p>
+              </div>
+              <p className="mt-1 break-after-avoid text-[var(--text-secondary)]">
+                {c.role} <span className="text-soft">· {c.location}</span>
               </p>
-              <p className="font-mono text-xs text-[var(--muted)]">{c.dates}</p>
-            </div>
-            <ul className="mt-2 list-disc space-y-1.5 pl-5 text-[var(--muted)]">
-              {c.items.map((item) => (
-                <li key={item.title}>
-                  <span className="text-[var(--foreground)]">{item.title}.</span>{" "}
-                  {item.description} ({item.impact})
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-        <p className="mt-5 text-xs text-[var(--muted)]">
-          Earlier: Founding Engineer, Duckcart (2022) · DevOps Engineer Intern,
-          Recruit CRM (2022–23).
-        </p>
+              <ul className="mt-6 max-w-[68ch] space-y-6">
+                {c.items.map((item) => (
+                  <li key={item.title} className="break-inside-avoid border-l-2 border-orange pl-4">
+                    <p className="font-semibold tracking-[-0.01em]">{item.title}</p>
+                    <p className="mt-1 leading-relaxed text-[var(--text-secondary)]">
+                      {item.description}
+                    </p>
+                    <p className="mt-2 text-[0.9375rem] font-medium first-letter:uppercase">{item.impact}</p>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+          <p className="text-[var(--text-secondary)]">
+            <span className="font-semibold text-ink">Earlier</span>
+            <span className="text-soft"> · </span>
+            Founding Engineer, Duckcart (2022)
+            <span className="text-soft"> · </span>
+            DevOps Engineer Intern, Recruit CRM (2022-23)
+          </p>
+        </div>
+      </Row>
 
-        <h2 className="mt-8 border-b border-[var(--border)] pb-1 font-mono text-xs uppercase tracking-[0.16em] text-[var(--muted)]">
-          Skills
-        </h2>
-        <dl className="mt-3 space-y-1.5">
-          {branches.map((b) => (
-            <div key={b} className="flex flex-wrap gap-x-2">
-              <dt className="w-20 shrink-0 font-mono text-xs uppercase text-[var(--muted)]">
-                {b}
-              </dt>
-              <dd className="flex-1 text-[var(--muted-strong)]">
+      <Row label="Skills">
+        <dl className="divide-y divide-line">
+          {branchTitles.map(([b, title]) => (
+            <div key={b} className="grid gap-1 py-3 first:pt-0 last:pb-0 sm:grid-cols-[10rem_1fr] sm:gap-6">
+              <dt className="label pt-1 text-soft">{title}</dt>
+              <dd className="leading-relaxed">
                 {treeNodes
                   .filter((n) => n.branch === b)
                   .map((n) => n.label)
@@ -103,19 +124,17 @@ export function RecruiterResume({ onExit }: { onExit?: () => void }) {
             </div>
           ))}
         </dl>
+      </Row>
 
-        <h2 className="mt-8 border-b border-[var(--border)] pb-1 font-mono text-xs uppercase tracking-[0.16em] text-[var(--muted)]">
-          Focus Areas
-        </h2>
-        <p className="mt-3 text-[var(--muted)]">
-          {focusAreas.map((f) => f.label).join(" · ")}
-        </p>
-
-        <h2 className="mt-8 border-b border-[var(--border)] pb-1 font-mono text-xs uppercase tracking-[0.16em] text-[var(--muted)]">
-          Writing (in progress)
-        </h2>
-        <p className="mt-3 text-[var(--muted)]">{writing.join(" · ")}</p>
-      </div>
-    </Container>
+      <Row label="Focus areas">
+        <ul className="flex flex-wrap gap-2">
+          {focusAreas.map((f) => (
+            <li key={f.label} className="rounded-full border border-line px-4 py-2 text-[0.9375rem]">
+              {f.label}
+            </li>
+          ))}
+        </ul>
+      </Row>
+    </div>
   );
 }

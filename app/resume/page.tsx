@@ -1,27 +1,34 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import { RecruiterResume } from "@/components/RecruiterResume";
+import { PrintButton, RecruiterResume } from "@/components/RecruiterResume";
+import { links } from "@/lib/data";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Aman Tyagi — Resume",
-  description:
-    "Senior software engineer: production RAG, LLM agents and multi-tenant backends. Printable resume.",
-};
+export const metadata = pageMeta(
+  "/resume",
+  "Resume",
+  "Senior software engineer: production RAG, LLM agents and multi-tenant backends. Printable resume.",
+);
 
-/* A real URL, not a mode toggle (redesign.md §14). Static, no motion,
-   prints to one clean page. */
+/* Static, no motion, prints to one clean page. */
 
 export default function ResumePage() {
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-[var(--foreground)]">
-      <div className="no-print border-b border-[var(--border)]">
-        <div className="mx-auto flex h-11 w-full max-w-[1280px] items-center px-6">
-          <Link
-            href="/"
-            className="font-mono text-[11px] text-[var(--text-secondary)] transition-colors hover:text-[var(--foreground)]"
+    <div className="min-h-[100dvh]">
+      <div className="no-print mx-auto flex w-full max-w-6xl items-center justify-between px-5 pt-5 md:px-10">
+        <Link
+          href="/"
+          className="press label rounded-full border border-line px-3 py-1.5 hover:border-ink"
+        >
+          ← Aman Tyagi
+        </Link>
+        <div className="flex items-center gap-2">
+          <PrintButton />
+          <a
+            href={links.email}
+            className="press rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-paper hover:bg-orange"
           >
-            ← aman.systems
-          </Link>
+            Get in touch
+          </a>
         </div>
       </div>
       <RecruiterResume />
