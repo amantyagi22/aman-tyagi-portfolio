@@ -65,7 +65,7 @@ export default function RecruitersPage() {
         ))}
       </dl>
 
-      <section aria-label="Proof" className="mt-12 px-3 md:mt-16 md:px-5">
+      <section aria-label="Proof" className={`${wrap} mt-12 md:mt-16`}>
         <ul className="grid gap-3 md:grid-cols-3">
           {PROOF.map((p, i) => (
             <li key={p.value}>
