@@ -6,9 +6,9 @@ const fine = () =>
   matchMedia("(hover: hover) and (pointer: fine)").matches &&
   !matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/* A number that rolls in character by character the first time it scrolls
-   into view. Server HTML shows the plain text; only numbers still below the
-   fold on mount get hidden and animated, so nothing already seen flashes. */
+/* A number that rolls in character by character. CSS rolls it on first
+   paint; numbers still below the fold get re-armed here and roll again when
+   they scroll into view, so the roll is never spent off screen. */
 export function Roll({ text }: { text: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {

@@ -167,7 +167,9 @@ body {
   }
 }
 
-/* numbers roll in a character at a time, the first time they're seen */
+/* numbers roll in a character at a time. CSS plays it on first paint, just
+   after the hero rises, so numbers on screen at load roll without JS. Ones
+   below the fold get re-armed by JS and replay when scrolled to. */
 @keyframes roll {
   from {
     opacity: 0;
@@ -177,11 +179,15 @@ body {
 }
 .roll > span:not(.sr-only) {
   display: inline-block;
+  animation: roll 600ms var(--ease-out) both;
+  animation-delay: calc(400ms + var(--i) * 70ms);
 }
-.roll[data-armed]:not([data-in]) > span {
+.roll[data-armed] > span:not(.sr-only) {
+  animation: none;
   opacity: 0;
 }
-.roll[data-in] > span {
+.roll[data-armed][data-in] > span:not(.sr-only) {
+  opacity: 1;
   animation: roll 600ms var(--ease-out) both;
   animation-delay: calc(var(--i) * 70ms);
 }
